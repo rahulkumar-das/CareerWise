@@ -45,7 +45,7 @@ console.log(body);
     //save the user in database
     user.save((err, newUser) => {
         if (err) {
-            if (err.errmsg && err.errmsg.includes("duplicate key error")) {
+            if (err.errmsg && err.errmsg.includes("duplicate key error") && err.errmsg.includes("email" )) {
                console.log(err)
                 return res.json({ message: "The provided email is already registered!" , err:err});
                 
@@ -86,8 +86,51 @@ const loginUser = function(req, res) {
 
 }
 
-const generateFeed = function(req, res){
-    res.status(200).json({ message: "Generating posts for users"})
+const generateFeed = function({payload}, res){
+
+    const posts=[];
+    const maxAmountOfPost = 48;
+    function addNameToPosts(array, name){
+        for( item of array){
+            item.name=name;
+        }
+    }
+
+
+    let myPosts = new Promise(function(resolve, reject){
+        User.findById(payload._id, "name posts friends",{lean: true}, (err,user)=>{
+            if(err){
+                return res.json({err: err});
+            }
+            addNameToPosts(user.posts, user.name)
+            posts.push(...user.posts);
+            resolve(user.friends);
+        });
+
+    });
+
+    let myFriendsPosts = myPosts.then((friendsArray)=>{
+        return new Promise(function(resolve, reject){
+            User.find({ '_id':{ $in: friendsArray} }, "name posts", {lean: true}, (err, users)=>{
+                if(err){
+                    return res.json({err:err});
+                }
+                for(user of users){
+                    addNameToPosts(user.posts, user.name);
+                    posts.push(...user.posts)
+                }
+                resolve();
+            });
+        });
+    });
+
+    myFriendsPosts.then(()=>{
+        
+        posts.sort((a,b)=>(a.date>b.date)? -1:1);
+        posts.slice(0,maxAmountOfPost);
+        res.status(200).json({ posts: posts});
+    });
+
 }
 
 const getSearchResults = function({ query, payload }, res ){
