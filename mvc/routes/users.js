@@ -17,12 +17,13 @@ router.get("/get-search-results",middleware.authorize, userCtrl.getSearchResults
 router.post("/make-friend-request/:from/:to", middleware.authorize, userCtrl.makeFriendRequest)
 router.get("/get-friend-requests", middleware.authorize, userCtrl.getFriendRequests)
 router.get("/get-user-data/:userid", middleware.authorize, userCtrl.getUserData)
-router.post("/resolve-friend-request/:from/:to", userCtrl.resolveFriendRequest)
+router.post("/resolve-friend-request/:from/:to", middleware.authorize, userCtrl.resolveFriendRequest)
+router.post("/create-post", middleware.authorize, userCtrl.createPost)
 
 
 //Only for development purpose
 router.delete("/all", userCtrl.deleteAllUsers);
-
+router.get("/all", userCtrl.getAllUsers);
 module.exports = router;
 
 

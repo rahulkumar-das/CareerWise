@@ -2,6 +2,7 @@ const passport = require('passport');
 const mongoose = require('mongoose');
 const User = mongoose.model('User'); // The model containing userSchema
 //var User = require('../models/users.js'); 
+const Post = mongoose.model('Post');
 const middleware = require('../routes/middleware/middleware');
 
 //to check if same id exist or not in friendRequest. Helper function
@@ -240,6 +241,44 @@ const resolveFriendRequest = function({query, params }, res){
     //res.statusJson(201,{ message: "Resolve friend request", ...query, ...params});
 }
 
+const createPost = function({body, payload}, res){
+    if(!body.content || !body.theme){
+        return res.statusJson(400,{ message: "Insufficient data sent with request"});
+
+    }    
+    
+    let userId= payload._id;
+    const post = new Post();
+    post.theme = body.theme;
+    post.content = body.content;
+
+    User.findById(userId, (err, user)=>{
+        if(err){
+            return res.json({err:err});
+        }
+        user.posts.push(post);
+        user.save((err)=>{
+            if(err){
+                return res.json({err:err});
+            }
+            return res.statusJson(201,{message: "Created Post", ...body, userId:userId});
+
+        });
+    });
+}
+
+//for development purpose-> to get all users
+const getAllUsers = function(req, res){
+    User.find((err, users)=>{
+        if(err){
+            return res.send({ error: err});
+        }
+        
+        return res.json({ users:users});
+    })
+}
+
+
 module.exports = {
     registerUser,
     loginUser,
@@ -249,5 +288,7 @@ module.exports = {
     makeFriendRequest,
     getUserData,
     getFriendRequests,
-    resolveFriendRequest
+    resolveFriendRequest,
+    createPost,
+    getAllUsers
 }
