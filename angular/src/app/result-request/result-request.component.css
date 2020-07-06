@@ -1,0 +1,14 @@
+/* Unique to the Result-Requests component */
+.result-request { transition: all .2s; }
+.result-request:hover { background-color: #4E73DF !important; }
+.result-request:hover * { color: white !important; }
+
+.result-request:hover .btn:first-of-type {
+    background-color: white !important;
+    color: #4E73DF !important;
+    border: none !important
+}
+
+.result-request:hover .btn:first-of-type:hover {
+    opacity: .6;
+}

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+    
+    <!-- Custom fonts for this template-->
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,300,400,600,700,800,900" rel="stylesheet">
+    
+    <!-- Custom styles for this template-->
+    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="css/custom-styles.css" rel="stylesheet">
+    <title>A Social Media - Register</title>
+    <style media="screen">
+    
+    
+    /* This code is unique to the forms */
+    .message-cutout {
+        position: fixed;
+        background-color: white;
+        opacity: .08;
+        width: 470px;
+        height: 300px;
+        z-index: 1;
+    }
+    .message-cutout:nth-of-type(1) {
+        clip-path: polygon(0% 0%, 100% 0%, 100% 75%, 75% 75%, 75% 100%, 50% 75%, 0% 75%);
+        top: 100px;
+        right: 80px;
+    }
+    .message-cutout:nth-of-type(2) {
+        clip-path: polygon(0% 0%, 100% 0%, 100% 75%, 50% 75%, 25% 100%, 25% 75%, 0% 75%);
+        top: 140px;
+        left: 140px;
+    }
+    
+    @media (max-width: 1440px) {
+        
+        .message-cutout {
+            width: 370px;
+            height: 250px;
+        }
+        
+    }
+    
+    @media (max-width: 992px) {
+        
+        .message-cutout { display: none; }
+        
+    }
+    
+    
+    
+    
+    </style>
+</head>
+<body id="page-top">
+    
+    <!-- The background message icon cutout -->
+    <div class="message-cutout"></div>
+    <div class="message-cutout"></div>
+    
+    
+    <div class="bg-gradient-primary min-vh-100">
+        <div class="bg-2">
+            <div class="container">
+                
+                <!-- All the content -->
+                <div class="text-white pt-6 pt-sm-16vh">
+                    <h1 class="font-weight-800 text-center display-4">A Social Media</h1>
+                    <p class="resp h4 w-50 mx-auto text-center" style="line-height: 150%;">A social media website for real people.  Definitely no fake users on this site. None at all.</p>
+                    
+                    <h2 class="font-weight-300 mt-4 text-center">Register an account.</h2>
+                    
+                    <form class="register-form user mt-5">
+                        <div class="form-group row">
+                            <div class="col-sm-6 mb-3 mb-sm-0">
+                                <input type="text" class="form-control form-control-user" id="exampleFirstName" placeholder="First Name" name="first_name">
+                            </div>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control form-control-user" id="exampleLastName" placeholder="Last Name" name="last_name">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" class="form-control form-control-user" id="exampleInputEmail" placeholder="Email Address" name="email">
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-6 mb-3 mb-sm-0">
+                                <input type="password" class="form-control form-control-user" id="exampleInputPassword" placeholder="Password" name="password">
+                            </div>
+                            <div class="col-sm-6">
+                                <input type="password" class="form-control form-control-user" id="exampleRepeatPassword" placeholder="Confirm Password" name="password_confirm">
+                            </div>
+                        </div>
+                        <input type="submit" class="btn btn-primary btn-user btn-block" value="Register an account">
+                    </form>
+                    <h4 class="text-center p-5 m-0">Already have an account?
+                        <a href="#" class="text-white link">Login</a>
+                    </h4>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
+    
+    <!-- Bootstrap core JavaScript-->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Core plugin JavaScript-->
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+    
+    <!-- Custom scripts for all pages-->
+    <script src="js/sb-admin-2.min.js"></script>
+</body>
+</html>

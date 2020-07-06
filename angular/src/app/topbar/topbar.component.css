@@ -1,0 +1,5 @@
+/* This is unique for the Topbar component. */
+#alerts {
+    max-height: 46vh;
+    overflow-y: auto;
+}

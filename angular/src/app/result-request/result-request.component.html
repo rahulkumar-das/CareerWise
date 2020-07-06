@@ -1,0 +1,34 @@
+<div class="result-request d-flex my-3 align-items-center bg-white shadow">
+    <a href="#" class="p-4 w-max"><img  src="/assets/images/f1.jpg" class="profile-img-md rounded "></a>
+    <div>
+        <h5><a href="#" class="link">{{resultRequest.name}}</a></h5>
+        <h6>Montreal, Canada</h6>
+        <div class="small">7 Mutual Friends</div>
+    </div>
+    
+    <!-- <div *ngIf="use == 'result'" class="ml-auto mr-3 mt-3 align-self-start">
+        <button (click)="this.api.makeFriendRequest(resultRequest._id)" class="btn btn-sm btn-primary rounded-pill">Add Friend</button>
+        <button class="btn btn-sm btn-success rounded-pill ml-1" data-toggle="modal" data-target="#staticBackdrop">Send Message</button>
+    </div>
+
+    <div *ngIf="use == 'request'" class="ml-auto mr-3 mt-3 align-self-start">
+        <button (click)="accept()" class="btn btn-sm btn-primary rounded-pill">Accept</button>
+        <button class="btn btn-sm btn-success rounded-pill ml-1" data-toggle="modal" data-target="#staticBackdrop">Send Message</button>
+        <button (click)="decline()" class="btn btn-sm btn-danger rounded-pill ml-1">Decline</button>
+    </div> -->
+
+    <div class="ml-auto mr-3 mt-3 align-self-start">
+        <button *ngIf="use == 'result' && !haveSentFriendRequest && !haveReceivedFriendRequest && !isFriend" (click)="this.api.makeFriendRequest(resultRequest._id)" class="btn btn-sm btn-primary rounded-pill">Add Friend</button>
+
+        <button *ngIf="haveSentFriendRequest" class="btn btn-sm btn-warning rounded-pill ml-1" data-toggle="modal" data-target="#staticBackdrop">Friend Request Pending</button>
+
+        <button *ngIf="isFriend" class="btn btn-sm btn-info rounded-pill ml-1" data-toggle="modal" data-target="#staticBackdrop">View Profile</button>
+
+        <button *ngIf="use == 'request' || haveReceivedFriendRequest"  class="btn btn-sm btn-primary rounded-pill ml-1" data-toggle="modal" data-target="#staticBackdrop" (click)="accept(); haveReceivedFriendRequest=false; isFriend=true;">Accept</button>
+
+        <button class="btn btn-sm btn-success rounded-pill ml-1" data-toggle="modal" data-target="#staticBackdrop">Send Message</button>
+    
+        <button *ngIf="use == 'request' || haveReceivedFriendRequest" class="btn btn-sm btn-danger rounded-pill ml-1" data-toggle="modal" data-target="#staticBackdrop" (click)="decline(); haveReceivedFriendRequest=false;">Decline</button>
+        
+    </div>
+</div>
