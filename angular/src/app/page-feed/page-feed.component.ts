@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../api.service';
-import { Title } from '@angular/platform-browser'
+import { Title } from '@angular/platform-browser';
+import { LocalStorageService } from '../local-storage.service'
 
 
 @Component({
@@ -10,7 +11,7 @@ import { Title } from '@angular/platform-browser'
 })
 export class PageFeedComponent implements OnInit {
 
-  constructor( private api: ApiService, private title: Title ) { }
+  constructor( private api: ApiService, private title: Title, private storage: LocalStorageService ) { }
 
   ngOnInit(): void {
 
@@ -25,4 +26,12 @@ export class PageFeedComponent implements OnInit {
     });
   }
 
+  public newPostContent: String ="";
+  public newPostTheme: String = this.storage.getPostTheme() || "primary";
+
+  public changeTheme(newTheme){
+    this.newPostTheme=newTheme;
+    this.storage.setPostTheme(newTheme);
+    console.log(this.newPostTheme);
+  }
 }

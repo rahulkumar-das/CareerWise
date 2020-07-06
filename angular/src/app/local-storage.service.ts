@@ -8,6 +8,7 @@ export class LocalStorageService {
   constructor() { }
 
   tokenName = "--token-ASM-PROD";
+  postThemeName = "--post-theme-ASM-PROD";
 
   public set(key, value){
     if( localStorage){
@@ -44,5 +45,13 @@ export class LocalStorageService {
   public getParsedToken(){
     let token = this.getToken();
     return JSON.parse(atob(token.split(".")[1]))
+  }
+
+  public setPostTheme(theme){
+    this.set(this.postThemeName, theme);
+  }
+
+  public getPostTheme(){
+    return this.get(this.postThemeName);
   }
 }
