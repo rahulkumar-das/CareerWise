@@ -10,3 +10,7 @@
 .comment-body{
     color: #585858;
 }
+ /* Unique to a Post component */
+ 
+ .comment { background-color: #F5F5F5 !important; }
+ 
