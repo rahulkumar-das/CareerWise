@@ -144,13 +144,13 @@ const getSearchResults = function({ query, payload }, res ){
             return res.json({err:err});
         }
 
-        results = results.splice(0,20);
+        results = results.splice(0,20); //only 20 records per page
         for(i=0; i<results.length;i++){
             /* console.log("=============")
             console.log(typeof results[i]._id)
             console.log(typeof payload._id)
             console.log("=============") */
-            if(results[i]._id == payload._id){
+            if(results[i]._id == payload._id){ // this loop disables the owner account in the search results
                 results.splice(i,1);
                 break;
             }

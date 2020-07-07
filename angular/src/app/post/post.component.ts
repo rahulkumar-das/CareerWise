@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Title } from '@angular/platform-browser'
 
 
@@ -9,6 +9,7 @@ import { Title } from '@angular/platform-browser'
 })
 export class PostComponent implements OnInit {
 
+  @Input() post;
   constructor(private title: Title) { }
 
   ngOnInit(): void {
