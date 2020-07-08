@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Title } from '@angular/platform-browser'
-import { ThrowStmt } from '@angular/compiler';
+import { ApiService } from '../api.service';
+import { LocalStorageService } from '../local-storage.service';
+
 
 
 @Component({
@@ -11,7 +12,7 @@ import { ThrowStmt } from '@angular/compiler';
 export class PostComponent implements OnInit {
 
   @Input() post;
-  constructor(private title: Title) { }
+  constructor(private api: ApiService, private storage: LocalStorageService) { }
 
   ngOnInit(): void {
 
@@ -50,10 +51,43 @@ export class PostComponent implements OnInit {
     if(this.post.content.length<5){
       this.fontSize=62;
     }
+
+    this.userId = this.storage.getParsedToken()._id;
+    if(this.post.likes.includes(this.userId)){
+      this.liked= true;
+    }
   }
 
   public fakeId:String="";
   //to align and adjust the fontSize of small content
   public fontSize: number =18;
   public align: String = "left";
-}
+  public liked:boolean = false;
+  public userId:String = "";
+
+
+  //method to like and remove like the post->same controller
+  public likeButtonClicked(postid){
+
+    let requestObject={
+      location: `users/like-unlike/${this.post.ownerid}/${this.post._id}`,
+      type: "POST",
+      authorize: true
+    }
+    this.api.makeRequest(requestObject).then((val)=>{
+      //console.log(val);
+      if(this.post.likes.includes(this.userId)){
+        this.post.likes.splice(this.post.likes.indexOf(this.userId),1);
+        this.liked = false; 
+
+      }
+      else{
+
+        this.post.likes.push(this.userId);
+        this.liked=true;
+      }
+    })
+    //console.log("Like of Dislike", postid);
+  }
+
+  }
