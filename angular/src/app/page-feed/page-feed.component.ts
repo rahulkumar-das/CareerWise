@@ -23,15 +23,18 @@ export class PageFeedComponent implements OnInit {
       authorize: true
     }
     this.api.makeRequest(requestObject).then((val)=>{
-      console.log(val.posts);
-      this.posts.col1= val.posts.filter((val,i)=>i%4==0);
-      this.posts.col2=val.posts.filter((val,i)=>i%4==1);
-      this.posts.col3=val.posts.filter((val,i)=>i%4==2);
-      this.posts.col4=val.posts.filter((val,i)=>i%4==3);
+     // console.log(val.posts);
+     if(val.statusCode == 200){
+       
+       this.posts.col1= val.posts.filter((val,i)=>i%4==0);
+       this.posts.col2=val.posts.filter((val,i)=>i%4==1);
+       this.posts.col3=val.posts.filter((val,i)=>i%4==2);
+       this.posts.col4=val.posts.filter((val,i)=>i%4==3);
+       
+     }
       
-      
-      console.log("POST Object");
-      console.log(this.posts);
+      //console.log("POST Object");
+      //console.log(this.posts);
     });
   }
 
@@ -46,10 +49,10 @@ export class PageFeedComponent implements OnInit {
 
   //4 column format for feed page
   public posts={
-    col1:[""],
-    col2:[""],
-    col3:[""],
-    col4:[""],
+    col3:[],
+    col2:[],
+    col4:[],
+    col1:[],
 
   }
 
@@ -70,6 +73,16 @@ export class PageFeedComponent implements OnInit {
 
     this.api.makeRequest(requestObject).then((val)=>{
       console.log(val);
+      if(val.statusCode ==201){
+        //update go
+        val.newPost.ago="Now";
+        //Update feed
+        this.posts.col1.unshift(val.newPost);
+
+      }
+      else{
+        this.events.onAlertEvent.emit("Something went wrong, your post could not be created");
+      }
       this.newPostContent="";
     });
     /* console.log("CREATE POST");

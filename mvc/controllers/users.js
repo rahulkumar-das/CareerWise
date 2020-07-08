@@ -4,6 +4,7 @@ const User = mongoose.model('User'); // The model containing userSchema
 //var User = require('../models/users.js'); 
 const Post = mongoose.model('Post');
 const middleware = require('../routes/middleware/middleware');
+const timeAgo = require("time-ago");
 
 //to check if same id exist or not in friendRequest. Helper function
 const containsDuplicate = function(array){
@@ -90,9 +91,12 @@ const generateFeed = function({payload}, res){
 
     const posts=[];
     const maxAmountOfPost = 48;
-    function addNameToPosts(array, name){
+
+    //need to update this function
+    function addNameAndAgoToPosts(array, name){
         for( item of array){
             item.name=name;
+            item.ago= timeAgo.ago(item.date)
         }
     }
 
@@ -102,7 +106,7 @@ const generateFeed = function({payload}, res){
             if(err){
                 return res.json({err: err});
             }
-            addNameToPosts(user.posts, user.name)
+            addNameAndAgoToPosts(user.posts, user.name)
             posts.push(...user.posts);
             resolve(user.friends);
         });
@@ -116,7 +120,7 @@ const generateFeed = function({payload}, res){
                     return res.json({err:err});
                 }
                 for(user of users){
-                    addNameToPosts(user.posts, user.name);
+                    addNameAndAgoToPosts(user.posts, user.name);
                     posts.push(...user.posts)
                 }
                 resolve();
@@ -128,7 +132,7 @@ const generateFeed = function({payload}, res){
         
         posts.sort((a,b)=>(a.date>b.date)? -1:1);
         posts.slice(0,maxAmountOfPost);
-        res.status(200).json({ posts: posts});
+        res.statusJson(200,{ posts: posts});
     });
 
 }
@@ -299,12 +303,16 @@ const createPost = function({body, payload}, res){
         if(err){
             return res.json({err:err});
         }
+
+        let newPost = post.toObject();
+        newPost.name = payload.name;
+
         user.posts.push(post);
         user.save((err)=>{
             if(err){
                 return res.json({err:err});
             }
-            return res.statusJson(201,{message: "Created Post", ...body, userId:userId});
+            return res.statusJson(201,{message: "Created Post", newPost: newPost});
 
         });
     });
