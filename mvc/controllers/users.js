@@ -93,10 +93,11 @@ const generateFeed = function({payload}, res){
     const maxAmountOfPost = 48;
 
     //need to update this function
-    function addNameAndAgoToPosts(array, name){
+    function addToPosts(array, name, ownerid){
         for( item of array){
             item.name=name;
             item.ago= timeAgo.ago(item.date)
+            item.ownerid = ownerid
         }
     }
 
@@ -106,7 +107,7 @@ const generateFeed = function({payload}, res){
             if(err){
                 return res.json({err: err});
             }
-            addNameAndAgoToPosts(user.posts, user.name)
+            addToPosts(user.posts, user.name, user._id)
             posts.push(...user.posts);
             resolve(user.friends);
         });
@@ -120,7 +121,7 @@ const generateFeed = function({payload}, res){
                     return res.json({err:err});
                 }
                 for(user of users){
-                    addNameAndAgoToPosts(user.posts, user.name);
+                    addToPosts(user.posts, user.name, user._id)
                     posts.push(...user.posts)
                 }
                 resolve();
@@ -329,6 +330,32 @@ const getAllUsers = function(req, res){
     })
 }
 
+const likeUnlike = function({payload, params}, res){
+   
+    User.findById(params.ownerid, (err,user)=>{
+        if(err){
+            return res.json({err:err});
+        }
+        //.id is inbuilt function in mongoose to retrive the documents in collection
+        const post = user.posts.id(params.postid);
+        if(post.likes.includes(payload._id)){
+            post.likes.splice(post.likes.indexOf(payload._id),1);
+        }
+        else{
+            post.likes.push(payload._id);
+        }
+
+        user.save((err,user)=>{
+            if(err){
+                return res.json({err:err});
+            }
+            
+            res.statusJson(201,{message:"Like or Unlike"});
+        })
+    })
+   
+}
+
 
 module.exports = {
     registerUser,
@@ -341,5 +368,6 @@ module.exports = {
     getFriendRequests,
     resolveFriendRequest,
     createPost,
-    getAllUsers
+    getAllUsers,
+    likeUnlike
 }

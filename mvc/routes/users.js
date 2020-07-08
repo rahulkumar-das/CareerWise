@@ -19,6 +19,7 @@ router.get("/get-friend-requests", middleware.authorize, userCtrl.getFriendReque
 router.get("/get-user-data/:userid", middleware.authorize, userCtrl.getUserData)
 router.post("/resolve-friend-request/:from/:to", middleware.authorize, userCtrl.resolveFriendRequest)
 router.post("/create-post", middleware.authorize, userCtrl.createPost)
+router.post("/like-unlike/:ownerid/:postid", middleware.authorize, userCtrl.likeUnlike)
 
 
 //Only for development purpose
