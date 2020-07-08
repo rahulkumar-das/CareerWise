@@ -64,7 +64,7 @@ export class PostComponent implements OnInit {
   public align: String = "left";
   public liked:boolean = false;
   public userId:String = "";
-
+  public comment: String = "";
 
   //method to like and remove like the post->same controller
   public likeButtonClicked(postid){
@@ -88,6 +88,38 @@ export class PostComponent implements OnInit {
       }
     })
     //console.log("Like of Dislike", postid);
+  }
+
+  public postComment(){
+    if(this.comment.length == 0){
+      return;
+    }
+    console.log("POST COMMENT", this.comment);
+
+    let requestObject={
+      location:`users/post-comment/${this.post.ownerid}/${this.post._id}`,
+      type: "POST",
+      authorize: true,
+      body:{
+        content: this.comment
+      }
+    }
+
+    this.api.makeRequest(requestObject).then((val)=>{
+      console.log(val);
+
+      if(val.statusCode == 201){
+        let newComment={
+          ...val.comment,
+          commenter_name: val.commenter.name,
+          commenter_image: val.commenter.profile_image
+        }
+
+        this.post.comments.push(newComment);
+        this.comment="";
+      }
+    })
+
   }
 
   }

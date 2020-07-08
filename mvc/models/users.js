@@ -4,10 +4,7 @@ const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 
 const commentSchema = new mongoose.Schema({
-    commenter_name:{
-        type:String,
-        required:true
-    },
+
     commenter_id:{
         type:String,
         required:true

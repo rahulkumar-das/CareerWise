@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const User = mongoose.model('User'); // The model containing userSchema
 //var User = require('../models/users.js'); 
 const Post = mongoose.model('Post');
+const Comment = mongoose.model('Comment');
 const middleware = require('../routes/middleware/middleware');
 const timeAgo = require("time-ago");
 
@@ -14,6 +15,31 @@ const containsDuplicate = function(array){
             return true;
         }
     }
+}
+
+//to get the commenter name from id and attach the profile image
+const addCommentDetails = function(posts){
+    return new Promise(function(resolve, reject){
+        let promises =[];
+
+        for(let post of posts){
+            for(let comment of post.comments){
+                let promise = new Promise(function(resolve, reject){
+                    User.findById(comment.commenter_id, "name profile_image", (err, user)=>{
+                        comment.commenter_name = user.name;
+                        comment.commenter_profile_image = user.profile_image;
+                        resolve(comment);
+                    });
+                });
+                promises.push(promise);
+            }
+        }
+        
+        Promise.all(promises).then((val)=>{
+            console.log(val);
+            resolve(posts);
+        })
+    });
 }
 
 const registerUser = function({ body }, res) {
@@ -133,7 +159,10 @@ const generateFeed = function({payload}, res){
         
         posts.sort((a,b)=>(a.date>b.date)? -1:1);
         posts.slice(0,maxAmountOfPost);
-        res.statusJson(200,{ posts: posts});
+        addCommentDetails(posts).then((posts)=>{
+
+            res.statusJson(200,{ posts: posts});
+        })
     });
 
 }
@@ -307,7 +336,7 @@ const createPost = function({body, payload}, res){
 
         let newPost = post.toObject();
         newPost.name = payload.name;
-
+        newPost.ownerid=payload._id;
         user.posts.push(post);
         user.save((err)=>{
             if(err){
@@ -356,6 +385,37 @@ const likeUnlike = function({payload, params}, res){
    
 }
 
+const postCommentOnPost = function({ body, payload, params}, res){
+    
+    User.findById(params.ownerid,(err,user)=>{
+        if(err){
+            return res.json({err:err});
+        }
+
+        const post = user.posts.id(params.postid);
+
+        let comment = new Comment();
+        comment.commenter_id = payload._id;
+        comment.comment_content = body.content;
+        post.comments.push(comment);
+
+        user.save((err,user)=>{
+            if(err){
+                return res.json({err:err});
+            }
+
+            User.findById(payload._id, "name profile_image", (err,user)=>{
+                if(err){
+                    return res.json({err:err});
+                }
+                res.statusJson(201,{message:"Posted Comment", comment: comment, commenter: user});
+            });
+
+        });
+    });
+    
+}
+
 
 module.exports = {
     registerUser,
@@ -369,5 +429,6 @@ module.exports = {
     resolveFriendRequest,
     createPost,
     getAllUsers,
-    likeUnlike
+    likeUnlike,
+    postCommentOnPost
 }
