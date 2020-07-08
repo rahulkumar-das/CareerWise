@@ -20,6 +20,7 @@
     "morgan": "~1.9.1",
     "nodemailer": "^6.4.10",
     "passport": "^0.4.1",
-    "passport-local": "^1.0.0"
+    "passport-local": "^1.0.0",
+    "time-ago": "^0.2.1"
   }
 }
