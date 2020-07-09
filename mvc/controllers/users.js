@@ -341,6 +341,7 @@ const createPost = function({body, payload}, res){
         newPost.name = payload.name;
         newPost.ownerid=payload._id;
         newPost.ownerProfileImage=user.profile_image;
+        console.log("This is newPost", newPost);
         user.posts.push(post);
         user.save((err)=>{
             if(err){
@@ -364,6 +365,7 @@ const getAllUsers = function(req, res){
 }
 
 const likeUnlike = function({payload, params}, res){
+    console.log(params)
    
     User.findById(params.ownerid, (err,user)=>{
     
@@ -394,7 +396,7 @@ const postCommentOnPost = function({ body, payload, params}, res){
     
     console.log(payload)
     User.findById(params.ownerid,(err,user)=>{
-        console.log(params.ownerid);
+        console.log(params);
         
         if(err){
             console.log("Enter here")
