@@ -210,6 +210,7 @@ const deleteAllUsers = function(req, res){
 const makeFriendRequest=function ({params}, res) {
     
     User.findById(params.to, (err, user)=>{
+        //console.log(user)
         if(err){
             return res.json(err);
         }
@@ -331,6 +332,7 @@ const createPost = function({body, payload}, res){
     post.content = body.content;
 
     User.findById(userId, (err, user)=>{
+        //console.log(user)
         if(err){
             return res.json({err:err});
         }
@@ -364,6 +366,7 @@ const getAllUsers = function(req, res){
 const likeUnlike = function({payload, params}, res){
    
     User.findById(params.ownerid, (err,user)=>{
+    
         if(err){
             return res.json({err:err});
         }
@@ -389,9 +392,13 @@ const likeUnlike = function({payload, params}, res){
 
 const postCommentOnPost = function({ body, payload, params}, res){
     
+    console.log(payload)
     User.findById(params.ownerid,(err,user)=>{
+        console.log(params.ownerid);
+        
         if(err){
-            return res.json({err:err});
+            console.log("Enter here")
+            return res.json({err:user});
         }
 
         const post = user.posts.id(params.postid);

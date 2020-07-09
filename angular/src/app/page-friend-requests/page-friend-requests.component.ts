@@ -25,9 +25,8 @@ export class PageFriendRequestsComponent implements OnInit {
 
       let requestObject ={
         location: `users/get-friend-requests?friend_requests=${array}`,
-        type: "GET",
-        body: data.friend_requests,
-        authorize: true
+        method: "GET",
+        body: data.friend_requests
       }
 
       this.api.makeRequest(requestObject).then((val)=>{

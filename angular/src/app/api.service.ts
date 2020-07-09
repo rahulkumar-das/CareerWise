@@ -23,9 +23,9 @@ export class ApiService {
   }
 
   public makeRequest(requestObject):any{
-    let type= requestObject.type.toLowerCase();
-    if(!type){
-      return console.log("No type is specified in the request object");
+    let method= requestObject.method.toLowerCase();
+    if(!method){
+      return console.log("No method is specified in the request object");
     }
 
     let body= requestObject.body || {};
@@ -45,13 +45,13 @@ export class ApiService {
       }
     } 
 
-    if(type == "get"){
+    if(method == "get"){
       return this.http.get(url, httpOptions).toPromise()
       .then(this.successHandler)
       .catch(this.errorHandler);
     }
 
-    if(type =="post"){
+    if(method =="post"){
       return this.http.post(url, body, httpOptions).toPromise()
       .then(this.successHandler)
       .catch(this.errorHandler)
@@ -63,8 +63,7 @@ export class ApiService {
     let from = this.storage.getParsedToken()._id;
    let requestObject={
      location: `users/make-friend-request/${from}/${to}`,
-     type: "POST",
-     authorize: true
+     method: "POST"
    }
 
    this.makeRequest(requestObject).then((val)=>{
@@ -85,8 +84,7 @@ export class ApiService {
     return new Promise((resolve)=>{
       let requestObject={
         location:`users/resolve-friend-request/${id}/${to}?resolution=${resolution}`,
-        type:"POST",
-        authorize: true
+        method:"POST"
       }
       this.makeRequest(requestObject).then((val)=>{
        if(val.statusCode === 201){

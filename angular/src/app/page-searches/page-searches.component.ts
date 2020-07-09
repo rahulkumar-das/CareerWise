@@ -43,7 +43,7 @@ export class PageSearchesComponent implements OnInit {
     
     let requestObject={
       location:`users/get-search-results?query=${this.query}`,
-      type:"GET",
+      method:"GET",
       authorize: true
     }
     

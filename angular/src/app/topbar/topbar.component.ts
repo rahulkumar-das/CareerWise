@@ -50,8 +50,8 @@ export class TopbarComponent implements OnInit {
 
     let requestObject={
       location:`users/get-user-data/${this.usersId}`,
-      type: "GET",
-      authorize: true
+      method: "GET",
+      authorize:true
 
     }
     //console.log(requestObject)
