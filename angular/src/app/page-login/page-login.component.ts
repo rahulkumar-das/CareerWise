@@ -43,7 +43,7 @@ export class PageLoginComponent implements OnInit {
 
   private login(){
     let requestObject = {
-      type : "POST",
+      method : "POST",
       location : "users/login",
       body : this.credentials
     }

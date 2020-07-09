@@ -37,7 +37,7 @@ export class ApiService {
     let url = `${this.baseUrl}/${location}`;
     let httpOptions ={};
 
-     if(requestObject.authorize){
+     if(this.storage.getToken()){
       httpOptions={
         headers: new HttpHeaders({
           'Authorization': `Bearer ${this.storage.getToken()}`

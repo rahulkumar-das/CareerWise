@@ -51,7 +51,7 @@ export class PageRegisterComponent implements OnInit {
     //console.log("Register");
 
     let requestObject= {
-      type:"POST",
+      method:"POST",
       location:"users/register",
       body: this.credentials
 

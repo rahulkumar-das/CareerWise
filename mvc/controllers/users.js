@@ -124,7 +124,7 @@ const generateFeed = function({payload}, res){
             item.name=user.name;
             item.ago= timeAgo.ago(item.date)
             item.ownerProfileImage = user.profile_image;
-            item.ownerid = user.ownerid
+            item.ownerid = user._id
         }
     }
 
@@ -341,7 +341,7 @@ const createPost = function({body, payload}, res){
         newPost.name = payload.name;
         newPost.ownerid=payload._id;
         newPost.ownerProfileImage=user.profile_image;
-        console.log("This is newPost", newPost);
+        //console.log("This is newPost", newPost);
         user.posts.push(post);
         user.save((err)=>{
             if(err){
