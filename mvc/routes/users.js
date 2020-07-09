@@ -3,9 +3,7 @@ const router = express.Router();
 
 const userCtrl = require('../controllers/users');
 const middleware = require('../routes/middleware/middleware');
-
-
-
+const fakeUsersCtrl = require('../controllers/fake-users');
 
 
 router.post('/register', userCtrl.registerUser);
@@ -27,6 +25,9 @@ router.post("/post-comment/:ownerid/:postid", middleware.authorize, userCtrl.pos
 //Only for development purpose
 router.delete("/all", userCtrl.deleteAllUsers);
 router.get("/all", userCtrl.getAllUsers);
+
+//to create fake users
+router.post("/create-fake-users", fakeUsersCtrl.createFakeUsers);
 module.exports = router;
 
 
