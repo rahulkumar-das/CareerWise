@@ -119,21 +119,22 @@ const generateFeed = function({payload}, res){
     const maxAmountOfPost = 48;
 
     //need to update this function
-    function addToPosts(array, name, ownerid){
+    function addToPosts(array, user){
         for( item of array){
-            item.name=name;
+            item.name=user.name;
             item.ago= timeAgo.ago(item.date)
-            item.ownerid = ownerid
+            item.ownerProfileImage = user.profile_image;
+            item.ownerid = user.ownerid
         }
     }
 
 
     let myPosts = new Promise(function(resolve, reject){
-        User.findById(payload._id, "name posts friends",{lean: true}, (err,user)=>{
+        User.findById(payload._id, "name profile_image posts friends",{lean: true}, (err,user)=>{
             if(err){
                 return res.json({err: err});
             }
-            addToPosts(user.posts, user.name, user._id)
+            addToPosts(user.posts, user)
             posts.push(...user.posts);
             resolve(user.friends);
         });
@@ -142,12 +143,12 @@ const generateFeed = function({payload}, res){
 
     let myFriendsPosts = myPosts.then((friendsArray)=>{
         return new Promise(function(resolve, reject){
-            User.find({ '_id':{ $in: friendsArray} }, "name posts", {lean: true}, (err, users)=>{
+            User.find({ '_id':{ $in: friendsArray} }, "name profile_image posts", {lean: true}, (err, users)=>{
                 if(err){
                     return res.json({err:err});
                 }
                 for(user of users){
-                    addToPosts(user.posts, user.name, user._id)
+                    addToPosts(user.posts, user)
                     posts.push(...user.posts)
                 }
                 resolve();
@@ -173,7 +174,7 @@ const getSearchResults = function({ query, payload }, res ){
     }
     //console.log(query);
     //using regex to find name and i stands to ignore the case
-    User.find({name: { $regex: query.query, $options: "i"}}, "name friends friend_requests", (err, results)=>{
+    User.find({name: { $regex: query.query, $options: "i"}}, "name profile_image friends friend_requests", (err, results)=>{
         if(err){
             return res.json({err:err});
         }
@@ -337,6 +338,7 @@ const createPost = function({body, payload}, res){
         let newPost = post.toObject();
         newPost.name = payload.name;
         newPost.ownerid=payload._id;
+        newPost.ownerProfileImage=user.profile_image;
         user.posts.push(post);
         user.save((err)=>{
             if(err){

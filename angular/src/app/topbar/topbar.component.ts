@@ -41,9 +41,11 @@ export class TopbarComponent implements OnInit {
     });
 
     this.centralUserData.getUserData.subscribe((data)=>{
-
+      console.log(data);
       this.userData = data;
       this.numOfFriendRequests= data.friend_requests.length;
+      this.profilePicture=data.profile_image;
+      //console.log(this.profilePicture)
     });
 
     let requestObject={
@@ -65,6 +67,7 @@ export class TopbarComponent implements OnInit {
   public userData:any={};
   public numOfFriendRequests: number=0;
   public usersId:String ="" ;
+  public profilePicture: String="default-avatar";
   
 
   public searchForFriends(){
