@@ -53,7 +53,7 @@ export class PageResetPasswordComponent implements OnInit {
 
   private reset(){
     let requestObject = {
-      type : "POST",
+      method : "POST",
       location : "reset/"+this.token,
       body : this.credentials
     }

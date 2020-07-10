@@ -43,7 +43,7 @@ export class PageSearchesComponent implements OnInit {
     
     let requestObject={
       location:`users/get-search-results?query=${this.query}`,
-      type:"GET",
+      method:"GET",
       authorize: true
     }
     
@@ -59,7 +59,7 @@ export class PageSearchesComponent implements OnInit {
 
         if(result.friend_requests.includes(this.user._id)){
           
-          result.haveFriendRequest = true;
+          result.haveSentFriendRequest = true;
         }
 
         if(this.user.friend_requests.includes(result._id)){

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../auth.service';
-import { Title } from '@angular/platform-browser'
+import { UserDataService } from '../user-data.service'
 
 
 
@@ -11,9 +11,15 @@ import { Title } from '@angular/platform-browser'
 })
 export class SidebarComponent implements OnInit {
 
-  constructor(public auth: AuthService, private title: Title) { }
+  constructor(public auth: AuthService, private centralUserData: UserDataService) { }
 
   ngOnInit(): void {
+    this.centralUserData.getUserData.subscribe((user)=>{
+      this.userData=user;
+      console.log(this.userData)
+    })
   }
+
+  public userData:any={};
 
 }

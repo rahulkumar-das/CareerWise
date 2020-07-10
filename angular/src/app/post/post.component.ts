@@ -71,8 +71,8 @@ export class PostComponent implements OnInit {
 
     let requestObject={
       location: `users/like-unlike/${this.post.ownerid}/${this.post._id}`,
-      type: "POST",
-      authorize: true
+      method: "POST",
+      
     }
     this.api.makeRequest(requestObject).then((val)=>{
       //console.log(val);
@@ -98,21 +98,22 @@ export class PostComponent implements OnInit {
 
     let requestObject={
       location:`users/post-comment/${this.post.ownerid}/${this.post._id}`,
-      type: "POST",
-      authorize: true,
+      method: "POST",
+  
       body:{
         content: this.comment
       }
     }
 
     this.api.makeRequest(requestObject).then((val)=>{
-      console.log(val);
+      console.log(requestObject);
+      console.log(this.post)
 
       if(val.statusCode == 201){
         let newComment={
           ...val.comment,
           commenter_name: val.commenter.name,
-          commenter_image: val.commenter.profile_image
+          commenter_profile_image: val.commenter.profile_image
         }
 
         this.post.comments.push(newComment);

@@ -36,10 +36,24 @@ const addCommentDetails = function(posts){
         }
         
         Promise.all(promises).then((val)=>{
-            console.log(val);
+           // console.log(val);
             resolve(posts);
         })
     });
+}
+
+//generate random number
+const getRandom = function(min, max) {
+    return Math.floor(Math.random() * (max - min) ) + min;
+}
+
+const addToPosts=function(array, user){
+    for( item of array){
+        item.name=user.name;
+        item.ago= timeAgo.ago(item.date)
+        item.ownerProfileImage = user.profile_image;
+        item.ownerid = user._id
+    }
 }
 
 const registerUser = function({ body }, res) {
@@ -71,6 +85,7 @@ console.log(body);
 
     //save the user in database
     user.save((err, newUser) => {
+        //console.log("This is new user", newUser)
         if (err) {
             if (err.errmsg && err.errmsg.includes("duplicate key error") && err.errmsg.includes("email" )) {
                console.log(err)
@@ -119,21 +134,22 @@ const generateFeed = function({payload}, res){
     const maxAmountOfPost = 48;
 
     //need to update this function
-    function addToPosts(array, name, ownerid){
+    /* function addToPosts(array, user){
         for( item of array){
-            item.name=name;
+            item.name=user.name;
             item.ago= timeAgo.ago(item.date)
-            item.ownerid = ownerid
+            item.ownerProfileImage = user.profile_image;
+            item.ownerid = user._id
         }
-    }
+    } */
 
 
     let myPosts = new Promise(function(resolve, reject){
-        User.findById(payload._id, "name posts friends",{lean: true}, (err,user)=>{
+        User.findById(payload._id, "name profile_image posts friends",{lean: true}, (err,user)=>{
             if(err){
                 return res.json({err: err});
             }
-            addToPosts(user.posts, user.name, user._id)
+            addToPosts(user.posts, user)
             posts.push(...user.posts);
             resolve(user.friends);
         });
@@ -142,12 +158,12 @@ const generateFeed = function({payload}, res){
 
     let myFriendsPosts = myPosts.then((friendsArray)=>{
         return new Promise(function(resolve, reject){
-            User.find({ '_id':{ $in: friendsArray} }, "name posts", {lean: true}, (err, users)=>{
+            User.find({ '_id':{ $in: friendsArray} }, "name profile_image posts", {lean: true}, (err, users)=>{
                 if(err){
                     return res.json({err:err});
                 }
                 for(user of users){
-                    addToPosts(user.posts, user.name, user._id)
+                    addToPosts(user.posts, user)
                     posts.push(...user.posts)
                 }
                 resolve();
@@ -173,7 +189,7 @@ const getSearchResults = function({ query, payload }, res ){
     }
     //console.log(query);
     //using regex to find name and i stands to ignore the case
-    User.find({name: { $regex: query.query, $options: "i"}}, "name friends friend_requests", (err, results)=>{
+    User.find({name: { $regex: query.query, $options: "i"}}, "name profile_image friends friend_requests", (err, results)=>{
         if(err){
             return res.json({err:err});
         }
@@ -209,6 +225,7 @@ const deleteAllUsers = function(req, res){
 const makeFriendRequest=function ({params}, res) {
     
     User.findById(params.to, (err, user)=>{
+        //console.log(user)
         if(err){
             return res.json(err);
         }
@@ -232,11 +249,53 @@ const makeFriendRequest=function ({params}, res) {
 
 const getUserData = function({params}, res){
    // res.statusJson(200, {message: "Placeholder data"})
-   User.findById(params.userid, (err,user)=>{
+   User.findById(params.userid, "-salt -password -resetPasswordToken -resetPasswordExpires", {lean:true}, (err,user)=>{
        if(err){
            return res.json({err: err});
        }
-       res.statusJson(200,{ user: user})
+
+       //to display 6 different friends on profile page, if less than 6 then show all
+       function getRandomFriends(friendsList){
+           let copyOfFriendsList=Array.from(friendsList);
+           let randomIds=[];
+
+           for(i=0;i<6;i++){
+               if(friendsList.length<=6){
+                   randomIds=copyOfFriendsList;
+                   break;
+               }
+               let randomId= getRandom(0,copyOfFriendsList.length);
+               randomIds.push(copyOfFriendsList[randomId]);
+               copyOfFriendsList.splice(randomId,1);
+           }
+
+           return new Promise(function(resolve,reject){
+            User.find({ '_id':{ $in: randomIds}}, "name profile_image", (err,friends)=>{
+                if(err){
+                    return res.json({err:err})
+                }
+
+                resolve(friends);
+            });
+           });
+       }
+
+      user.posts.sort((a,b)=>(a.date>b.date)? -1:1);
+
+      addToPosts(user.posts, user);
+
+      let randomFriends=getRandomFriends(user.friends);
+      let commentDetails=addCommentDetails(user.posts);
+
+      Promise.all([randomFriends, commentDetails]).then((val)=>{
+        user.random_friends = val[0];
+          res.statusJson(200,{ user: user});
+      });
+
+
+       /* console.log("===========");
+       console.log(randomFriends);
+       console.log("==========="); */
    });
 }
 
@@ -330,6 +389,7 @@ const createPost = function({body, payload}, res){
     post.content = body.content;
 
     User.findById(userId, (err, user)=>{
+        //console.log(user)
         if(err){
             return res.json({err:err});
         }
@@ -337,6 +397,8 @@ const createPost = function({body, payload}, res){
         let newPost = post.toObject();
         newPost.name = payload.name;
         newPost.ownerid=payload._id;
+        newPost.ownerProfileImage=user.profile_image;
+        //console.log("This is newPost", newPost);
         user.posts.push(post);
         user.save((err)=>{
             if(err){
@@ -360,8 +422,10 @@ const getAllUsers = function(req, res){
 }
 
 const likeUnlike = function({payload, params}, res){
+    console.log(params)
    
     User.findById(params.ownerid, (err,user)=>{
+    
         if(err){
             return res.json({err:err});
         }
@@ -387,9 +451,13 @@ const likeUnlike = function({payload, params}, res){
 
 const postCommentOnPost = function({ body, payload, params}, res){
     
+    console.log(payload)
     User.findById(params.ownerid,(err,user)=>{
+        //console.log(params);
+        
         if(err){
-            return res.json({err:err});
+            console.log("Enter here")
+            return res.json({err:user});
         }
 
         const post = user.posts.id(params.postid);
