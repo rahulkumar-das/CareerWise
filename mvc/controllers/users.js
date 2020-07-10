@@ -71,6 +71,7 @@ console.log(body);
 
     //save the user in database
     user.save((err, newUser) => {
+        //console.log("This is new user", newUser)
         if (err) {
             if (err.errmsg && err.errmsg.includes("duplicate key error") && err.errmsg.includes("email" )) {
                console.log(err)
