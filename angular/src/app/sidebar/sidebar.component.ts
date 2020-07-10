@@ -16,7 +16,7 @@ export class SidebarComponent implements OnInit {
   ngOnInit(): void {
     this.centralUserData.getUserData.subscribe((user)=>{
       this.userData=user;
-      //console.log(this.userData)
+      console.log(this.userData)
     })
   }
 

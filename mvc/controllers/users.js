@@ -36,10 +36,24 @@ const addCommentDetails = function(posts){
         }
         
         Promise.all(promises).then((val)=>{
-            console.log(val);
+           // console.log(val);
             resolve(posts);
         })
     });
+}
+
+//generate random number
+const getRandom = function(min, max) {
+    return Math.floor(Math.random() * (max - min) ) + min;
+}
+
+const addToPosts=function(array, user){
+    for( item of array){
+        item.name=user.name;
+        item.ago= timeAgo.ago(item.date)
+        item.ownerProfileImage = user.profile_image;
+        item.ownerid = user._id
+    }
 }
 
 const registerUser = function({ body }, res) {
@@ -120,14 +134,14 @@ const generateFeed = function({payload}, res){
     const maxAmountOfPost = 48;
 
     //need to update this function
-    function addToPosts(array, user){
+    /* function addToPosts(array, user){
         for( item of array){
             item.name=user.name;
             item.ago= timeAgo.ago(item.date)
             item.ownerProfileImage = user.profile_image;
             item.ownerid = user._id
         }
-    }
+    } */
 
 
     let myPosts = new Promise(function(resolve, reject){
@@ -235,11 +249,53 @@ const makeFriendRequest=function ({params}, res) {
 
 const getUserData = function({params}, res){
    // res.statusJson(200, {message: "Placeholder data"})
-   User.findById(params.userid, (err,user)=>{
+   User.findById(params.userid, "-salt -password -resetPasswordToken -resetPasswordExpires", {lean:true}, (err,user)=>{
        if(err){
            return res.json({err: err});
        }
-       res.statusJson(200,{ user: user})
+
+       //to display 6 different friends on profile page, if less than 6 then show all
+       function getRandomFriends(friendsList){
+           let copyOfFriendsList=Array.from(friendsList);
+           let randomIds=[];
+
+           for(i=0;i<6;i++){
+               if(friendsList.length<=6){
+                   randomIds=copyOfFriendsList;
+                   break;
+               }
+               let randomId= getRandom(0,copyOfFriendsList.length);
+               randomIds.push(copyOfFriendsList[randomId]);
+               copyOfFriendsList.splice(randomId,1);
+           }
+
+           return new Promise(function(resolve,reject){
+            User.find({ '_id':{ $in: randomIds}}, "name profile_image", (err,friends)=>{
+                if(err){
+                    return res.json({err:err})
+                }
+
+                resolve(friends);
+            });
+           });
+       }
+
+      user.posts.sort((a,b)=>(a.date>b.date)? -1:1);
+
+      addToPosts(user.posts, user);
+
+      let randomFriends=getRandomFriends(user.friends);
+      let commentDetails=addCommentDetails(user.posts);
+
+      Promise.all([randomFriends, commentDetails]).then((val)=>{
+        user.random_friends = val[0];
+          res.statusJson(200,{ user: user});
+      });
+
+
+       /* console.log("===========");
+       console.log(randomFriends);
+       console.log("==========="); */
    });
 }
 
@@ -397,7 +453,7 @@ const postCommentOnPost = function({ body, payload, params}, res){
     
     console.log(payload)
     User.findById(params.ownerid,(err,user)=>{
-        console.log(params);
+        //console.log(params);
         
         if(err){
             console.log("Enter here")
