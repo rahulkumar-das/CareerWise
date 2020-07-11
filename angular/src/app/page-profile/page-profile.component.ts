@@ -21,12 +21,13 @@ export class PageProfileComponent implements OnInit {
     this.title.setTitle("Profile")
     this.document.getElementById("sidebarToggleTop").classList.add("d-none");
 
-    let paramId = this.route.snapshot.params.userid;
+    //let paramId = this.route.snapshot.params.userid;
     //console.log("this is paramId",paramId)
 
     this.centralUserData.getUserData.subscribe((user)=>{
       //console.log(user)
       this.route.params.subscribe((params)=>{
+        this.showPosts=6;
 
         if(params.userid==user._id){
          // console.log("Your profile")
@@ -56,6 +57,10 @@ export class PageProfileComponent implements OnInit {
               this.haveReceivedFriendRequest=user.friend_requests.includes(data.user._id);
               //if sent friend request by user to data.user, check friend_requests array of data.user by id of user set true
               this.haveSentFriendRequest=data.user.friend_requests.includes(user._id) ? true:false;
+
+              if(this.canAddUser){
+                this.showPosts=0;
+              }
 
               this.setComponentValues(data.user)
             }
@@ -106,6 +111,7 @@ export class PageProfileComponent implements OnInit {
         this.haveReceivedFriendRequest=false;
         this.canAddUser=false;
         this.totalFriends++;
+        this.showPosts=6;
       }
 
       

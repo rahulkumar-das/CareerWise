@@ -80,8 +80,10 @@
             </h3>
            <app-post *ngFor="let post of posts.slice(0, showPosts)" [post]="post"></app-post>
 
-            <a (click)="showMorePosts();" *ngIf="posts.length && posts.length > showPosts"
+            <a (click)="showMorePosts();" *ngIf="posts.length && posts.length > showPosts && showPosts"
               class="bg-success d-block mt-4 py-3 text-center rounded-pill text-white link h5">Load More</a>
+
+              <h3 *ngIf="!showPosts" class="text-center w-75 mx-auto mt-5 text-purple">Add this user as a friend to see their latest posts.</h3>
 
                 <div *ngIf="posts.length && showPosts>=posts.length">
                   <h2 class="mt-5 text-primary text-center">No more Posts</h2>
