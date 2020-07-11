@@ -30,8 +30,9 @@ export class PageProfileComponent implements OnInit {
 
         if(params.userid==user._id){
          // console.log("Your profile")
-         this.canSendMessage=false;
+        // this.canSendMessage=false;
           this.setComponentValues(user);
+          this.resetBooleans();
         }
         else{
          // console.log("Not your profile");
@@ -120,6 +121,21 @@ export class PageProfileComponent implements OnInit {
 
       
     })
+  }
+
+  public makeFriendRequest(){
+    this.api.makeFriendRequest(this.usersId).then((val)=>{
+      if(val['statusCode']==201){
+        this.haveSentFriendRequest=true;
+      }
+    })
+  }  
+
+  private resetBooleans(){
+    this.canAddUser=false;
+    this.canSendMessage=false;
+    this.haveSentFriendRequest=false;
+    this.haveReceivedFriendRequest=false
   }
 
 }

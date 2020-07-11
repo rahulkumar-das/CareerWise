@@ -42,7 +42,7 @@
                 </div>
 
                 <div class="my-4">
-                  <button *ngIf="canAddUser" class="btn btn-light text-primary rounded-pill m-1">
+                  <button (click)="makeFriendRequest()" *ngIf="canAddUser && !haveReceivedFriendRequest && !haveSentFriendRequest" class="btn btn-light text-primary rounded-pill m-1">
                     Add Friend
                   </button>
                   <button *ngIf="canSendMessage" class="btn btn-info rounded-pill m-1">
