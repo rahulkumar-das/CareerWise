@@ -26,6 +26,22 @@
                 </p>
 
                 <div class="my-4">
+                  <div *ngIf="haveReceivedFriendRequest" class="my-4">
+
+                    <hr class="w-25 my-4 bg-white">
+                    <h6 class="text-white font-weight-200">This user has sent you a friend request</h6>
+
+                    <button (click)="accept();" class="btn btn-sm btn-success rounded-pill m-1 px-4">Accept</button>
+
+                    <button (click)="decline();" class="btn btn-sm btn-danger rounded-pill m-1 px-4">Decline</button>
+                    <hr class="w-25 my-4 bg-white">
+
+                  </div>
+
+                  <button *ngIf="haveSentFriendRequest" class="btn btn-warning rounded-pill m-1">Friend Request Pending</button>
+                </div>
+
+                <div class="my-4">
                   <button *ngIf="canAddUser" class="btn btn-light text-primary rounded-pill m-1">
                     Add Friend
                   </button>

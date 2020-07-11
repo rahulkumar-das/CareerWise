@@ -4,6 +4,7 @@ import { DOCUMENT } from '@angular/common';
 import { UserDataService } from '../user-data.service';
 import { ApiService } from '../api.service';
 import { ActivatedRoute } from '@angular/router';
+import { EventEmitterService } from '../event-emitter.service';
 
 
 
@@ -14,7 +15,7 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class PageProfileComponent implements OnInit {
 
-  constructor(private title: Title, @Inject(DOCUMENT) private document: Document, private centralUserData: UserDataService, private api: ApiService, private route: ActivatedRoute) { }
+  constructor(private title: Title, @Inject(DOCUMENT) private document: Document, private centralUserData: UserDataService, private api: ApiService, private route: ActivatedRoute, private events: EventEmitterService) { }
 
   ngOnInit(): void {
     this.title.setTitle("Profile")
@@ -43,6 +44,18 @@ export class PageProfileComponent implements OnInit {
           this.api.makeRequest(requestObject).then((data)=>{
             if(data.statusCode == 200){
               //console.log(data)
+
+              //if already a friend, cannot add from profile page
+              this.canAddUser = user.friends.includes(data.user._id) ? false:true;
+
+              // user-> the logged in profile
+              //data.user-> other's profile
+
+              //if received friend request from data.user by checking friend_requests array of user by id of data.user set true
+              this.haveReceivedFriendRequest=user.friend_requests.includes(data.user._id);
+              //if sent friend request by user to data.user, check friend_requests array of data.user by id of user set true
+              this.haveSentFriendRequest=data.user.friend_requests.includes(user._id) ? true:false;
+
               this.setComponentValues(data.user)
             }
           })
@@ -59,9 +72,12 @@ export class PageProfileComponent implements OnInit {
   public usersName: string="";
   public showPosts: number=6;
   public usersEmail: string="";
+  public usersId: string="";
 
   public canAddUser: boolean=false;
   public canSendMessage: boolean=false;
+  public haveSentFriendRequest: boolean = false;
+  public haveReceivedFriendRequest: boolean=false;
 
 
   public showMorePosts(){
@@ -78,6 +94,32 @@ export class PageProfileComponent implements OnInit {
     this.usersName=user.name;
     this.usersEmail=user.email;
     this.totalFriends=user.friends.length;
+    this.usersId=user._id;
+  }
+
+  public accept(){
+    console.log("ACCEPT")
+
+    this.api.resolveFriendRequest("accept", this.usersId).then((val)=>{
+      if(val['statusCode'] == 201){
+        this.haveReceivedFriendRequest=false;
+        this.canAddUser=false;
+        this.totalFriends++;
+      }
+
+      
+    })
+  }
+  public decline(){
+    console.log("Decline")
+
+    this.api.resolveFriendRequest("decline", this.usersId).then((val)=>{
+      if(val['statusCode'] == 201){
+        this.haveReceivedFriendRequest=false;
+      }
+
+      
+    })
   }
 
 }
