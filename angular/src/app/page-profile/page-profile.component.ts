@@ -25,14 +25,30 @@ export class PageProfileComponent implements OnInit {
 
     this.centralUserData.getUserData.subscribe((user)=>{
       //console.log(user)
-      if(paramId==user._id){
-        console.log("Your profile")
-        this.setComponentValues(user);
-      }
-      else{
-        console.log("Not your profile")
-      }
-    })
+      this.route.params.subscribe((params)=>{
+
+        if(params.userid==user._id){
+         // console.log("Your profile")
+         this.canSendMessage=false;
+          this.setComponentValues(user);
+        }
+        else{
+         // console.log("Not your profile");
+          this.canSendMessage=true;
+          let requestObject={
+            location:`users/get-user-data/${params.userid}`,
+            method:"GET"
+          }
+  
+          this.api.makeRequest(requestObject).then((data)=>{
+            if(data.statusCode == 200){
+              //console.log(data)
+              this.setComponentValues(data.user)
+            }
+          })
+        }
+      })
+      })
   }
 
 
@@ -45,7 +61,7 @@ export class PageProfileComponent implements OnInit {
   public usersEmail: string="";
 
   public canAddUser: boolean=false;
-  public canSendMessage: boolean=true;
+  public canSendMessage: boolean=false;
 
 
   public showMorePosts(){
