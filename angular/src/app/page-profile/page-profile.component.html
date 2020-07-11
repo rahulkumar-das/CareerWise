@@ -26,7 +26,23 @@
                 </p>
 
                 <div class="my-4">
-                  <button *ngIf="canAddUser" class="btn btn-light text-primary rounded-pill m-1">
+                  <div *ngIf="haveReceivedFriendRequest" class="my-4">
+
+                    <hr class="w-25 my-4 bg-white">
+                    <h6 class="text-white font-weight-200">This user has sent you a friend request</h6>
+
+                    <button (click)="accept();" class="btn btn-sm btn-success rounded-pill m-1 px-4">Accept</button>
+
+                    <button (click)="decline();" class="btn btn-sm btn-danger rounded-pill m-1 px-4">Decline</button>
+                    <hr class="w-25 my-4 bg-white">
+
+                  </div>
+
+                  <button *ngIf="haveSentFriendRequest" class="btn btn-warning rounded-pill m-1">Friend Request Pending</button>
+                </div>
+
+                <div class="my-4">
+                  <button (click)="makeFriendRequest()" *ngIf="canAddUser && !haveReceivedFriendRequest && !haveSentFriendRequest" class="btn btn-light text-primary rounded-pill m-1">
                     Add Friend
                   </button>
                   <button *ngIf="canSendMessage" class="btn btn-info rounded-pill m-1">
@@ -43,9 +59,9 @@
               <div class="row m-0">
                 <div *ngFor="let friend of randomFriends" class="col-xl-4 col-6 mt-5">
                   <div class="friend">
-                    <img src="/assets/images/{{friend.profile_image}}.jpg" />
+                    <img routerLink="/profile/{{friend._id}}" src="/assets/images/{{friend.profile_image}}.jpg" />
                     <h5 class="text-center pb-1">
-                      <a href="#" class="link text-purple font-weight-400"
+                      <a routerLink="/profile/{{friend._id}}" class="link text-purple font-weight-400"
                         >{{friend.name}}</a
                       >
                     </h5>
@@ -64,8 +80,10 @@
             </h3>
            <app-post *ngFor="let post of posts.slice(0, showPosts)" [post]="post"></app-post>
 
-            <a (click)="showMorePosts();" *ngIf="posts.length && posts.length > showPosts"
+            <a (click)="showMorePosts();" *ngIf="posts.length && posts.length > showPosts && showPosts"
               class="bg-success d-block mt-4 py-3 text-center rounded-pill text-white link h5">Load More</a>
+
+              <h3 *ngIf="!showPosts" class="text-center w-75 mx-auto mt-5 text-purple">Add this user as a friend to see their latest posts.</h3>
 
                 <div *ngIf="posts.length && showPosts>=posts.length">
                   <h2 class="mt-5 text-primary text-center">No more Posts</h2>

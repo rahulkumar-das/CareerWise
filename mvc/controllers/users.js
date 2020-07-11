@@ -283,12 +283,16 @@ const getUserData = function({params}, res){
       user.posts.sort((a,b)=>(a.date>b.date)? -1:1);
 
       addToPosts(user.posts, user);
+     // console.log(user.posts.comments)
 
       let randomFriends=getRandomFriends(user.friends);
       let commentDetails=addCommentDetails(user.posts);
 
+      //console.log("Comment details", commentDetails);
+
       Promise.all([randomFriends, commentDetails]).then((val)=>{
         user.random_friends = val[0];
+       // console.log("Comment details", commentDetails.comments);
           res.statusJson(200,{ user: user});
       });
 
