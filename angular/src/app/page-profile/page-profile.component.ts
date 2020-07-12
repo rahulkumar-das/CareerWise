@@ -1,10 +1,11 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { DOCUMENT } from '@angular/common';
 import { UserDataService } from '../user-data.service';
 import { ApiService } from '../api.service';
 import { ActivatedRoute } from '@angular/router';
 import { EventEmitterService } from '../event-emitter.service';
+import { Subscription } from 'rxjs';
 
 
 
@@ -24,7 +25,7 @@ export class PageProfileComponent implements OnInit {
     //let paramId = this.route.snapshot.params.userid;
     //console.log("this is paramId",paramId)
 
-    this.centralUserData.getUserData.subscribe((user)=>{
+    let userDataEvent= this.centralUserData.getUserData.subscribe((user)=>{
       //console.log(user)
       this.route.params.subscribe((params)=>{
         this.showPosts=6;
@@ -67,8 +68,15 @@ export class PageProfileComponent implements OnInit {
           })
         }
       })
+
       })
+      this.subscriptions.add(userDataEvent);
   }
+
+  ngOnDestroy(){
+    //console.log("DESTROY");
+    this.subscriptions.unsubscribe();
+  } 
 
 
   public randomFriends: string[]=[];
@@ -84,6 +92,8 @@ export class PageProfileComponent implements OnInit {
   public canSendMessage: boolean=false;
   public haveSentFriendRequest: boolean = false;
   public haveReceivedFriendRequest: boolean=false;
+
+  public subscriptions= new Subscription();
 
 
   public showMorePosts(){

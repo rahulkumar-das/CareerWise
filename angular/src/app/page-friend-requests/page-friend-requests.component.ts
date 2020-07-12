@@ -1,8 +1,9 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { UserDataService } from '../user-data.service';
 import { ApiService } from '../api.service';
 import { Title } from '@angular/platform-browser';
 import { DOCUMENT } from '@angular/common';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-page-friend-requests',
@@ -16,7 +17,7 @@ export class PageFriendRequestsComponent implements OnInit {
   ngOnInit(): void {
     this.title.setTitle("Friend Request");
     this.document.getElementById("sidebarToggleTop").classList.add("d-none");
-    this.centralUserData.getUserData.subscribe((data)=>{
+    let userDataEvent=this.centralUserData.getUserData.subscribe((data)=>{
 
       this.userData = data;
      // console.log(this.userData)
@@ -37,7 +38,13 @@ export class PageFriendRequestsComponent implements OnInit {
       });
       
     });
+    this.subscriptions.add(userDataEvent)
   }
+
+  ngOnDestroy(){
+    //console.log("DESTROY");
+    this.subscriptions.unsubscribe();
+  } 
   public userData: object = {}
   public friendRequests = []
 
@@ -52,5 +59,6 @@ export class PageFriendRequestsComponent implements OnInit {
 
     }
   }
+  public subscriptions= new Subscription();
 
 }

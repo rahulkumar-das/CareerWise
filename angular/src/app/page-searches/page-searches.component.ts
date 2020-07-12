@@ -1,9 +1,10 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ApiService } from '../api.service';
 import { Title } from '@angular/platform-browser';
 import { DOCUMENT } from '@angular/common';
 import { UserDataService } from '../user-data.service';
+import { Subscription } from 'rxjs';
 
 
 @Component({
@@ -22,7 +23,8 @@ export class PageSearchesComponent implements OnInit {
   ngOnInit(): void {
     this.title.setTitle("Search Results");
     this.document.getElementById("sidebarToggleTop").classList.add("d-none");
-    this.centralUserData.getUserData.subscribe((data)=>{
+    
+    let userDataEvent=this.centralUserData.getUserData.subscribe((data)=>{
       this.subscription = this.route.params.subscribe(params =>{
      // console.log(this.query+" Inside onInit");
         this.query = params.query;
@@ -30,8 +32,13 @@ export class PageSearchesComponent implements OnInit {
           this.getResults();
       });
     });
+    this.subscriptions.add(userDataEvent)
     
   }
+  ngOnDestroy(){
+    //console.log("DESTROY");
+    this.subscriptions.unsubscribe();
+  } 
   
   
 
@@ -71,6 +78,7 @@ export class PageSearchesComponent implements OnInit {
     })
 
   }
+  public subscriptions= new Subscription();
   
 
 }
