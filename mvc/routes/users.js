@@ -21,6 +21,7 @@ router.post("/resolve-friend-request/:from/:to", middleware.authorize, userCtrl.
 router.post("/create-post", middleware.authorize, userCtrl.createPost)
 router.post("/like-unlike/:ownerid/:postid", middleware.authorize, userCtrl.likeUnlike)
 router.post("/post-comment/:ownerid/:postid", middleware.authorize, userCtrl.postCommentOnPost)
+router.post("/send-message/:to", middleware.authorize, userCtrl.sendMessage)
 
 
 

@@ -99,13 +99,11 @@ export class TopbarComponent implements OnInit {
   }
 
   public sendMessage(){
-    if(!this.sendMessageObject.content){
-      this.events.onAlertEvent.emit("Message not sent. You must provide some content for your message");
-      return;
-    }
-    console.log("user to", this.sendMessageObject.name);
+   
+    /* console.log("user to", this.sendMessageObject.name);
     console.log("user id", this.sendMessageObject.id);
-    console.log("content", this.sendMessageObject.content);
+    console.log("content", this.sendMessageObject.content); */
+    this.api.sendMessage(this.sendMessageObject);
     this.sendMessageObject.content="";
   }
   

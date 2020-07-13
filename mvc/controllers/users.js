@@ -4,6 +4,7 @@ const User = mongoose.model('User'); // The model containing userSchema
 //var User = require('../models/users.js'); 
 const Post = mongoose.model('Post');
 const Comment = mongoose.model('Comment');
+const Message = mongoose.model('Message');
 const middleware = require('../routes/middleware/middleware');
 const timeAgo = require("time-ago");
 
@@ -488,6 +489,110 @@ const postCommentOnPost = function({ body, payload, params}, res){
     
 }
 
+const sendMessage = function({ body, payload, params}, res){
+    //console.log(payload);
+
+    let from = payload._id;
+    let to = params.to;
+
+    let fromPromise = new Promise(function(resolve, reject){
+        //find the sender
+        User.findById(from, "messages", (err, user)=>{
+            if(err){
+                reject("Error", err);
+                return res.json({err:err});
+            }
+            from = user;
+            resolve(user);
+        });
+    });
+
+    let toPromise = new Promise(function(resolve, reject){
+        //find the receiver
+        User.findById(to, "messages", (err, user)=>{
+            if(err){
+                reject("Error", err);
+                return res.json({err:err});
+            }
+            to = user;
+            resolve(user);
+        });
+    });
+
+   let sendMessagePromise= Promise.all([fromPromise, toPromise]).then(()=>{
+       /*  console.log("==========")
+        console.log("FROM", from)
+        console.log("TO", to)
+        console.log("===========") */
+
+
+        function hasMessageFrom(messages, id){
+            for(let message of messages){
+                if(message.from_id == id){
+                    return message;
+                }
+            }
+        }
+
+        function sendMessageTo(to, from){
+            return new Promise(function(resolve, reject){
+               if(foundMessage = hasMessageFrom(to.messages, from._id)){
+                    foundMessage.content.push(message);
+                    to.save((err,user)=>{
+                        if(err){
+                            reject("Error", err);
+                            return res.json({err:err});
+                        }
+                        resolve(user);
+                    });
+               }
+               else{
+
+                let newMessage= new Message();
+                newMessage.from_id= from._id;
+                newMessage.content = [message];
+
+                to.messages.push(newMessage);
+                to.save((err,user)=>{
+
+                    if(err){
+                        reject("Error", err);
+                        return res.json({err:err});
+                    }
+                    resolve(user);
+
+                });
+
+               }
+            });
+        }
+
+        let message={
+            messenger: from._id,
+            message: body.content
+        }
+
+        let sendMessageToRecipient = sendMessageTo(to,from);
+        let sendMessageToAuthor = sendMessageTo(from, to);
+
+
+        return new Promise(function(resolve, reject){
+            Promise.all([sendMessageToRecipient, sendMessageToAuthor]).then(()=>{
+                resolve();
+            });
+
+        });
+
+    });
+            sendMessagePromise.then(()=>{
+    
+                return res.statusJson(201,{
+                    message: "Sending Message"
+                });
+
+    });
+    
+}
 
 module.exports = {
     registerUser,
@@ -502,5 +607,6 @@ module.exports = {
     createPost,
     getAllUsers,
     likeUnlike,
-    postCommentOnPost
+    postCommentOnPost,
+    sendMessage
 }
