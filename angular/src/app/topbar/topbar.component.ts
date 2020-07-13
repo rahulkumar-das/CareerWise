@@ -44,6 +44,11 @@ export class TopbarComponent implements OnInit {
       this.numOfFriendRequests--;
     });
 
+    let updateMessageEvent = this.events.updateSendMessageObjectEvent.subscribe((d)=>{
+      this.sendMessageObject.id = d.id;
+      this.sendMessageObject.name = d.name;
+    });
+
     let userDataEvent=this.centralUserData.getUserData.subscribe((data)=>{
       //console.log(data);
       this.userData = data;
@@ -66,7 +71,8 @@ export class TopbarComponent implements OnInit {
     this.subscriptions.add(alertEvent);
     this.subscriptions.add(friendRequestEvent);
     this.subscriptions.add(userDataEvent)
-    console.log("this is it",this.subscriptions)
+    this.subscriptions.add(updateMessageEvent);
+    //console.log("this is it",this.subscriptions)
 
   }
 
@@ -84,6 +90,24 @@ export class TopbarComponent implements OnInit {
   public profilePicture: String="default-avatar";
 
   public subscriptions= new Subscription();
+
+  //to send message
+  public sendMessageObject={
+    id:"",
+    name:"",
+    content:""
+  }
+
+  public sendMessage(){
+    if(!this.sendMessageObject.content){
+      this.events.onAlertEvent.emit("Message not sent. You must provide some content for your message");
+      return;
+    }
+    console.log("user to", this.sendMessageObject.name);
+    console.log("user id", this.sendMessageObject.id);
+    console.log("content", this.sendMessageObject.content);
+    this.sendMessageObject.content="";
+  }
   
 
   public searchForFriends(){

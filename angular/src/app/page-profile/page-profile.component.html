@@ -45,7 +45,7 @@
                   <button (click)="makeFriendRequest()" *ngIf="canAddUser && !haveReceivedFriendRequest && !haveSentFriendRequest" class="btn btn-light text-primary rounded-pill m-1">
                     Add Friend
                   </button>
-                  <button *ngIf="canSendMessage" class="btn btn-info rounded-pill m-1">
+                  <button *ngIf="canSendMessage" class="btn btn-info rounded-pill m-1" data-toggle="modal" data-target="#staticBackdrop" (click)="updateSendMessageObject(usersId, usersName)">
                     Send Message
                   </button>
                 </div>

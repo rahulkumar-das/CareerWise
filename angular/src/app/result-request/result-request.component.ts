@@ -1,7 +1,8 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { ApiService } from '../api.service'
-import { LocalStorageService } from '../local-storage.service'
-import { Title } from '@angular/platform-browser'
+import { ApiService } from '../api.service';
+import { LocalStorageService } from '../local-storage.service';
+import { Title } from '@angular/platform-browser';
+import { EventEmitterService } from '../event-emitter.service';
 
 
 
@@ -16,7 +17,7 @@ export class ResultRequestComponent implements OnInit {
   @Output() resultRequestChange = new EventEmitter<any>()
   @Input() use;
 
-  constructor(public api: ApiService, private storage: LocalStorageService, private title: Title) { }
+  constructor(public api: ApiService, private storage: LocalStorageService, private title: Title, private events: EventEmitterService) { }
 
   ngOnInit(): void {
     if(this.resultRequest.haveSentFriendRequest){
@@ -48,6 +49,13 @@ export class ResultRequestComponent implements OnInit {
 
   private updateRequests(){
     this.resultRequestChange.emit(this.resultRequest._id)
+  }
+
+  public updateSendMessageObject(id, name){
+    this.events.updateSendMessageObjectEvent.emit({
+      id:id,
+      name:name
+    });
   }
 
   public haveSentFriendRequest: boolean = false;

@@ -154,4 +154,11 @@ export class PageProfileComponent implements OnInit {
     this.haveReceivedFriendRequest=false
   }
 
+  public updateSendMessageObject(id, name){
+    this.events.updateSendMessageObjectEvent.emit({
+      id:id,
+      name:name
+    });
+  }
+
 }
