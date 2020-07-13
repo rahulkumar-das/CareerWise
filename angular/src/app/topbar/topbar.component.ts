@@ -71,7 +71,7 @@ export class TopbarComponent implements OnInit {
   }
 
   ngOnDestroy(){
-    //console.log("DESTROY");
+    console.log("DESTROY");
     this.subscriptions.unsubscribe();
   } 
 
