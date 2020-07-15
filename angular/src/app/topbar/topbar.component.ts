@@ -36,7 +36,7 @@ export class TopbarComponent implements OnInit {
     this.usersId=this.storage.getParsedToken()._id;
 
     let alertEvent = this.events.onAlertEvent.subscribe((msg)=>{
-      console.log("ALERT");
+      //console.log("ALERT");
       this.alertMessage = msg;
     });
 
@@ -60,7 +60,7 @@ export class TopbarComponent implements OnInit {
       this.profilePicture=user.profile_image;
 
       this.setMessagePreviews(user.messages, user.new_message_notifications);
-      console.log(this.messagePreviews);
+     // console.log(this.messagePreviews);
       //console.log(this.profilePicture)
     });
 
@@ -173,4 +173,7 @@ export class TopbarComponent implements OnInit {
     }
   }
 
+  public messageLink(messageId){
+    this.router.navigate(['/messages'], {state:{data:{ msgId: messageId} } } );
+  }
 }
