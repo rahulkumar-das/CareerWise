@@ -1,5 +1,6 @@
  /* Unique for the Messages component */
- .message { background-color: #F5F5F5 !important; }
+ .message { background-color: #F5F5F5 !important; cursor: pointer; }
+ .message:hover { background-color: #EEEEEE !important }
  .message-container { max-width: 75%; }
  .message-style {
      line-height: 300%;
