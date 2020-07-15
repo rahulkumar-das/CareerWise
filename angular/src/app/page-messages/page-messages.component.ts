@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Title } from '@angular/platform-browser'
+import { Title } from '@angular/platform-browser';
+import { ApiService } from '../api.service';
 
 
 @Component({
@@ -9,10 +10,11 @@ import { Title } from '@angular/platform-browser'
 })
 export class PageMessagesComponent implements OnInit {
 
-  constructor(private title: Title) { }
+  constructor(private title: Title, private api: ApiService) { }
 
   ngOnInit(): void {
-    this.title.setTitle("Your Messages")
+    this.title.setTitle("Your Messages");
+    this.api.resetMessageNotifications();
   }
 
 }
