@@ -37,7 +37,7 @@ export class PageForgotPasswordComponent implements OnInit {
 
   private forgot(){
     let requestObject = {
-      type : "POST",
+      method : "POST",
       location : "forgot",
       body : this.credentials
     }

@@ -36,22 +36,38 @@ export class TopbarComponent implements OnInit {
     this.usersId=this.storage.getParsedToken()._id;
 
     let alertEvent = this.events.onAlertEvent.subscribe((msg)=>{
-      console.log("ALERT");
+      //console.log("ALERT");
       this.alertMessage = msg;
     });
 
     let friendRequestEvent= this.events.updateNumberOfFriendRequestsEvent.subscribe((msg)=>{
-      this.numOfFriendRequests--;
+     // this.numOfFriendRequests--;
+     this.notifications.friendRequests--;
     });
 
-    let userDataEvent=this.centralUserData.getUserData.subscribe((data)=>{
+    let updateMessageEvent = this.events.updateSendMessageObjectEvent.subscribe((d)=>{
+      this.sendMessageObject.id = d.id;
+      this.sendMessageObject.name = d.name;
+    });
+
+    let userDataEvent=this.centralUserData.getUserData.subscribe((user)=>{
       //console.log(data);
-      this.userData = data;
-      this.numOfFriendRequests= data.friend_requests.length;
-      this.profilePicture=data.profile_image;
+     // this.userData = data;
+     // this.numOfFriendRequests= data.friend_requests.length;
+     //console.log(user.messages);
+     this.notifications.friendRequests = user.friend_requests.length;
+     this.notifications.messages = user.new_message_notifications.length;
+      this.profilePicture=user.profile_image;
+
+      this.setMessagePreviews(user.messages, user.new_message_notifications);
+     // console.log(this.messagePreviews);
       //console.log(this.profilePicture)
     });
 
+    let resetMessagesEvent = this.events.resetMessageNotificationsEvent.subscribe(()=>{
+      this.notifications.messages = 0;
+    })
+    
     let requestObject={
       location:`users/get-user-data/${this.usersId}`,
       method: "GET",
@@ -66,24 +82,51 @@ export class TopbarComponent implements OnInit {
     this.subscriptions.add(alertEvent);
     this.subscriptions.add(friendRequestEvent);
     this.subscriptions.add(userDataEvent)
-    console.log("this is it",this.subscriptions)
+    this.subscriptions.add(updateMessageEvent);
+    this.subscriptions.add(resetMessagesEvent);
+    //console.log("this is it",this.subscriptions)
 
   }
 
   ngOnDestroy(){
-    console.log("DESTROY");
+   // console.log("DESTROY");
     this.subscriptions.unsubscribe();
   } 
 
-  public query: String = "";
-  public usersName:String ="";
-  public alertMessage: String="";
-  public userData:any={};
-  public numOfFriendRequests: number=0;
-  public usersId:String ="" ;
-  public profilePicture: String="default-avatar";
-
   public subscriptions= new Subscription();
+  public query: String = "";
+  public sendMessageObject={
+    id:"",
+    name:"",
+    content:""
+  }
+  public alertMessage: String="";
+
+  //User Data
+  public usersName:String ="";
+ // public userData:any={};
+ public usersId:String ="" ;
+ public profilePicture: string="default-avatar";
+ public messagePreviews = [];
+ public notifications={
+   alert:0,
+   friendRequests:0,
+   messages:0
+ }
+
+ 
+ //public numOfFriendRequests: number=0;
+
+  //to send message
+
+  public sendMessage(){
+   
+    /* console.log("user to", this.sendMessageObject.name);
+    console.log("user id", this.sendMessageObject.id);
+    console.log("content", this.sendMessageObject.content); */
+    this.api.sendMessage(this.sendMessageObject);
+    this.sendMessageObject.content="";
+  }
   
 
   public searchForFriends(){
@@ -91,4 +134,46 @@ export class TopbarComponent implements OnInit {
     this.router.navigate(['/search-results',  { query: this.query }])
   }
 
+  public resetMessageNotifications(){
+    this.api.resetMessageNotifications();
+  }
+
+  private setMessagePreviews(messages,messageNotifications){
+    for(let i = messages.length-1; i>=0;i--){
+      let lastMessage = messages[i].content[messages[i].content.length-1];
+      let preview={
+        messengerName: messages[i].messengerName,
+        messageContent: lastMessage.message,
+        messengerImage: "",
+        messengerId: messages[i].from_id,
+        isNew: false
+      }
+
+      if(lastMessage.messenger == this.usersId){
+        preview.messengerImage=this.profilePicture
+
+      }
+      else{
+        preview.messengerImage=messages[i].messengerProfileImage
+        if(messageNotifications.includes(messages[i].from_id)){
+          preview.isNew=true;
+
+        }
+
+      }
+
+      if(preview.isNew){
+        this.messagePreviews.unshift(preview);
+
+      }
+      else{
+        this.messagePreviews.push(preview);
+
+      }
+    }
+  }
+
+  public messageLink(messageId){
+    this.router.navigate(['/messages'], {state:{data:{ msgId: messageId} } } );
+  }
 }

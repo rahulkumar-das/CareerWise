@@ -4,6 +4,7 @@ const User = mongoose.model('User'); // The model containing userSchema
 //var User = require('../models/users.js'); 
 const Post = mongoose.model('Post');
 const Comment = mongoose.model('Comment');
+const Message = mongoose.model('Message');
 const middleware = require('../routes/middleware/middleware');
 const timeAgo = require("time-ago");
 
@@ -280,6 +281,39 @@ const getUserData = function({params}, res){
            });
        }
 
+       function addMessengerDetails(messages){
+           return new Promise(function(resolve,reject){
+            if(!messages.length){
+                resolve(messages);
+            }
+            let usersArray = [];
+            for(let message of messages){
+                usersArray.push(message.from_id);
+            }
+
+            User.find({'_id':{$in: usersArray}}, "name profile_image", (err,users)=>{
+                if(err){
+                    return res.json({err:err});
+                }
+
+                for(message of messages){
+                    for(let i =0;i<users.length;i++){
+                        if(message.from_id == users[i]._id){
+                            message.messengerName = users[i].name;
+                            message.messengerProfileImage = users[i].profile_image;
+                            users.splice(i,1);
+                            break;
+                        }
+
+                    }
+                }
+
+                resolve(messages);
+            });
+
+           });
+       }
+
       user.posts.sort((a,b)=>(a.date>b.date)? -1:1);
 
       addToPosts(user.posts, user);
@@ -287,11 +321,13 @@ const getUserData = function({params}, res){
 
       let randomFriends=getRandomFriends(user.friends);
       let commentDetails=addCommentDetails(user.posts);
+      let messageDetails= addMessengerDetails(user.messages);
 
       //console.log("Comment details", commentDetails);
 
-      Promise.all([randomFriends, commentDetails]).then((val)=>{
+      Promise.all([randomFriends, commentDetails, messageDetails]).then((val)=>{
         user.random_friends = val[0];
+        user.messages = val[2];
        // console.log("Comment details", commentDetails.comments);
           res.statusJson(200,{ user: user});
       });
@@ -488,6 +524,132 @@ const postCommentOnPost = function({ body, payload, params}, res){
     
 }
 
+const sendMessage = function({ body, payload, params}, res){
+    //console.log(payload);
+
+    let from = payload._id;
+    let to = params.to;
+
+    let fromPromise = new Promise(function(resolve, reject){
+        //find the sender
+        User.findById(from, "messages", (err, user)=>{
+            if(err){
+                reject("Error", err);
+                return res.json({err:err});
+            }
+            from = user;
+            resolve(user);
+        });
+    });
+
+    let toPromise = new Promise(function(resolve, reject){
+        //find the receiver
+        User.findById(to, "messages new_message_notifications", (err, user)=>{
+            if(err){
+                reject("Error", err);
+                return res.json({err:err});
+            }
+            to = user;
+            resolve(user);
+        });
+    });
+
+   let sendMessagePromise= Promise.all([fromPromise, toPromise]).then(()=>{
+       /*  console.log("==========")
+        console.log("FROM", from)
+        console.log("TO", to)
+        console.log("===========") */
+
+
+        function hasMessageFrom(messages, id){
+            for(let message of messages){
+                if(message.from_id == id){
+                    return message;
+                }
+            }
+        }
+
+        function sendMessageTo(to, from, notify = false){
+            return new Promise(function(resolve, reject){
+
+                if(notify && !to.new_message_notifications.includes(from._id)){
+                    to.new_message_notifications.push(from._id);
+
+                }
+
+               if(foundMessage = hasMessageFrom(to.messages, from._id)){
+                    foundMessage.content.push(message);
+                    to.save((err,user)=>{
+                        if(err){
+                            reject("Error", err);
+                            return res.json({err:err});
+                        }
+                        resolve(user);
+                    });
+               }
+               else{
+
+                let newMessage= new Message();
+                newMessage.from_id= from._id;
+                newMessage.content = [message];
+
+                to.messages.push(newMessage);
+                to.save((err,user)=>{
+
+                    if(err){
+                        reject("Error", err);
+                        return res.json({err:err});
+                    }
+                    resolve(user);
+
+                });
+
+               }
+            });
+        }
+
+        let message={
+            messenger: from._id,
+            message: body.content
+        }
+
+        let sendMessageToRecipient = sendMessageTo(to,from, true);
+        let sendMessageToAuthor = sendMessageTo(from, to);
+
+
+        return new Promise(function(resolve, reject){
+            Promise.all([sendMessageToRecipient, sendMessageToAuthor]).then(()=>{
+                resolve();
+            });
+
+        });
+
+    });
+            sendMessagePromise.then(()=>{
+    
+                return res.statusJson(201,{
+                    message: "Sending Message"
+                });
+
+    });
+    
+}
+
+const resetMessageNotifications = function({payload}, res){
+    User.findById(payload._id,(err,user)=>{
+        if(err){
+            return res.json({err:err});
+        }
+        user.new_message_notifications=[];
+        user.save((err)=>{
+            if(err){
+                return res.json({err:err});
+            }
+            return res.statusJson(201,{message:"Reset message notifications."});
+        });
+
+    });
+}
 
 module.exports = {
     registerUser,
@@ -502,5 +664,7 @@ module.exports = {
     createPost,
     getAllUsers,
     likeUnlike,
-    postCommentOnPost
+    postCommentOnPost,
+    sendMessage,
+    resetMessageNotifications
 }
