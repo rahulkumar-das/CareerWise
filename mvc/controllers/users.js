@@ -57,6 +57,45 @@ const addToPosts=function(array, user){
     }
 }
 
+const alertUser = function(fromUser, toId, type, postContent){
+    return new Promise(function(resolve, reject){
+
+        let alert={
+            alert_type: type,
+            from_id: fromUser._id,
+            from_name: fromUser.name
+        }
+
+        switch(type){
+            case "new_friend":
+                alert.alert_text = `${alert.from_name} has accepted your friend request`;
+                break;
+        }
+
+        User.findById(toId,(err,user)=>{
+            if(err){
+                reject("Error: ",err)
+                return res.json({err:err});
+            }
+
+            user.new_notifications++;
+            user.notifications.push(JSON.stringify(alert));
+            user.save((err,user)=>{
+                if(err){
+                    reject("Error: ",err)
+                    return res.json({err:err});
+                }
+                resolve();
+
+            })
+
+        });
+
+    });
+}
+
+
+//Controllers
 const registerUser = function({ body }, res) {
 
 console.log(body);
@@ -404,7 +443,10 @@ const resolveFriendRequest = function({query, params }, res){
                     res.json({ err: err});
                 }
 
-                res.statusJson(201,{ message: "Resolved friend request"});
+                alertUser(user,params.from, "new_friend").then(()=>{
+
+                    res.statusJson(201,{ message: "Resolved friend request"});
+                });
 
             });
 
