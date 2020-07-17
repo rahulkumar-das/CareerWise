@@ -58,6 +58,7 @@ export class TopbarComponent implements OnInit {
      this.notifications.friendRequests = user.friend_requests.length;
      this.notifications.messages = user.new_message_notifications.length;
       this.profilePicture=user.profile_image;
+      this.notifications.alerts=user.new_notifications;
 
       this.setMessagePreviews(user.messages, user.new_message_notifications);
      // console.log(this.messagePreviews);
@@ -109,7 +110,7 @@ export class TopbarComponent implements OnInit {
  public profilePicture: string="default-avatar";
  public messagePreviews = [];
  public notifications={
-   alert:0,
+   alerts:0,
    friendRequests:0,
    messages:0
  }
