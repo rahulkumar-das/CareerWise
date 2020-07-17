@@ -66,10 +66,23 @@ const alertUser = function(fromUser, toId, type, postContent){
             from_name: fromUser.name
         }
 
+        if(postContent && postContent.length>28){
+            postContent = postContent.substring(0,28)+"...";
+        }
+
         switch(type){
             case "new_friend":
                 alert.alert_text = `${alert.from_name} has accepted your friend request`;
                 break;
+
+            case "liked_post":
+                alert.alert_text = `${alert.from_name} has liked your post, '${postContent}' `;
+                break;
+
+            case "commented_post":
+                alert.alert_text = `${alert.from_name} has commented on your post, '${postContent}' `;
+                break;
+            default: return reject("No valid type for alert.");
         }
 
         User.findById(toId,(err,user)=>{
@@ -513,27 +526,59 @@ const likeUnlike = function({payload, params}, res){
         }
         //.id is inbuilt function in mongoose to retrive the documents in collection
         const post = user.posts.id(params.postid);
-        if(post.likes.includes(payload._id)){
-            post.likes.splice(post.likes.indexOf(payload._id),1);
-        }
-        else{
-            post.likes.push(payload._id);
-        }
 
-        user.save((err,user)=>{
-            if(err){
-                return res.json({err:err});
-            }
+        let promise = new Promise(function(resolve, reject){
             
-            res.statusJson(201,{message:"Like or Unlike"});
-        })
-    })
+            if(post.likes.includes(payload._id)){
+                post.likes.splice(post.likes.indexOf(payload._id),1);
+                resolve();
+            }
+            else{
+                post.likes.push(payload._id);
+
+                if(params.ownerid != payload._id){
+
+                    User.findById(payload._id,(err,user)=>{
+
+                        if(err){
+                            reject("Error:", err);
+                            return res.json({err:err});
+                        }
+
+                        alertUser(user, params.ownerid, "liked_post", post.content).then(()=>{
+                            resolve();
+
+                        });
+
+                    });
+
+                }
+                else{
+                    resolve();
+                }
+            }
+        });
+
+        promise.then(()=>{
+
+            user.save((err,user)=>{
+                if(err){
+                    return res.json({err:err});
+                }
+                
+                res.statusJson(201,{message:"Like or Unlike"});
+            });
+
+        });
+
+
+    });
    
 }
 
 const postCommentOnPost = function({ body, payload, params}, res){
     
-    console.log(payload)
+   // console.log(payload)
     User.findById(params.ownerid,(err,user)=>{
         //console.log(params);
         
@@ -558,7 +603,25 @@ const postCommentOnPost = function({ body, payload, params}, res){
                 if(err){
                     return res.json({err:err});
                 }
-                res.statusJson(201,{message:"Posted Comment", comment: comment, commenter: user});
+
+                let promise = new Promise(function(resolve, reject){
+                    if(payload._id != params.ownerid){
+                        alertUser(user,params.ownerid, "commented_post", post.content).then(()=>{
+                            resolve();
+                        })
+
+                    }
+                    else{
+                        resolve();
+
+                    }
+                });
+
+                promise.then(()=>{
+
+                    res.statusJson(201,{message:"Posted Comment", comment: comment, commenter: user});
+                });
+
             });
 
         });
