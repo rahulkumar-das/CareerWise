@@ -3,7 +3,7 @@ import { AuthService } from '../auth.service';
 import { Router } from '@angular/router';
 import { LocalStorageService } from '../local-storage.service';
 import { EventEmitterService } from '../event-emitter.service';
-import { UserDataService } from '../user-data.service';
+//import { UserDataService } from '../user-data.service';
 import { ApiService } from '../api.service';
 import { Title } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
@@ -22,7 +22,7 @@ export class TopbarComponent implements OnInit {
 
   
   constructor(public auth: AuthService, private router: Router, private storage: LocalStorageService, private events: EventEmitterService,
-                private centralUserData: UserDataService, private api: ApiService, private title: Title) { }
+                 private api: ApiService, private title: Title) { }
 
   ngOnInit(): void {
 
@@ -50,7 +50,7 @@ export class TopbarComponent implements OnInit {
       this.sendMessageObject.name = d.name;
     });
 
-    let userDataEvent=this.centralUserData.getUserData.subscribe((user)=>{
+    let userDataEvent=this.events.getUserData.subscribe((user)=>{
      // console.log(user);
      // this.userData = data;
      // this.numOfFriendRequests= data.friend_requests.length;
@@ -77,7 +77,7 @@ export class TopbarComponent implements OnInit {
     //console.log(requestObject)
     this.api.makeRequest(requestObject).then((val)=>{
       //console.log(val)
-      this.centralUserData.getUserData.emit(val.user);
+      this.events.getUserData.emit(val.user);
     });
     this.subscriptions.add(alertEvent);
     this.subscriptions.add(friendRequestEvent);

@@ -1,5 +1,6 @@
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
-import { UserDataService } from '../user-data.service';
+//import { UserDataService } from '../user-data.service';
+import { EventEmitterService } from '../event-emitter.service';
 import { ApiService } from '../api.service';
 import { Title } from '@angular/platform-browser';
 import { DOCUMENT } from '@angular/common';
@@ -12,12 +13,12 @@ import { Subscription } from 'rxjs';
 })
 export class PageFriendRequestsComponent implements OnInit {
 
-  constructor(private centralUserData: UserDataService, private api: ApiService, private title: Title, @Inject(DOCUMENT) private document: Document) { }
+  constructor(private events: EventEmitterService, private api: ApiService, private title: Title, @Inject(DOCUMENT) private document: Document) { }
 
   ngOnInit(): void {
     this.title.setTitle("Friend Request");
     this.document.getElementById("sidebarToggleTop").classList.add("d-none");
-    let userDataEvent=this.centralUserData.getUserData.subscribe((data)=>{
+    let userDataEvent=this.events.getUserData.subscribe((data)=>{
 
       this.userData = data;
      // console.log(this.userData)

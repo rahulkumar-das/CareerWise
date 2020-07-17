@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { DOCUMENT } from '@angular/common';
-import { UserDataService } from '../user-data.service';
+//import { UserDataService } from '../user-data.service';
 import { ApiService } from '../api.service';
 import { ActivatedRoute } from '@angular/router';
 import { EventEmitterService } from '../event-emitter.service';
@@ -16,7 +16,7 @@ import { Subscription } from 'rxjs';
 })
 export class PageProfileComponent implements OnInit {
 
-  constructor(private title: Title, @Inject(DOCUMENT) private document: Document, private centralUserData: UserDataService, private api: ApiService, private route: ActivatedRoute, private events: EventEmitterService) { }
+  constructor(private title: Title, @Inject(DOCUMENT) private document: Document, private api: ApiService, private route: ActivatedRoute, private events: EventEmitterService) { }
 
   ngOnInit(): void {
     this.title.setTitle("Profile")
@@ -25,7 +25,7 @@ export class PageProfileComponent implements OnInit {
     //let paramId = this.route.snapshot.params.userid;
     //console.log("this is paramId",paramId)
 
-    let userDataEvent= this.centralUserData.getUserData.subscribe((user)=>{
+    let userDataEvent= this.events.getUserData.subscribe((user)=>{
       //console.log(user)
       this.route.params.subscribe((params)=>{
         this.showPosts=6;
