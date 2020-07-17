@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ApiService } from '../api.service';
-import { UserDataService } from '../user-data.service';
+//import { UserDataService } from '../user-data.service';
+import { EventEmitterService } from '../event-emitter.service';
 import { Subscription } from 'rxjs';
 import{ ChangeDetectorRef } from '@angular/core';
 
@@ -14,7 +15,7 @@ import{ ChangeDetectorRef } from '@angular/core';
 })
 export class PageMessagesComponent implements OnInit {
 
-  constructor(private title: Title, private api: ApiService, private centralUserData: UserDataService,  private cdRef : ChangeDetectorRef ) { }
+  constructor(private title: Title, private api: ApiService, private events: EventEmitterService,  private cdRef : ChangeDetectorRef ) { }
 
   ngOnInit(): void {
 
@@ -33,7 +34,7 @@ export class PageMessagesComponent implements OnInit {
       console.log("Not found")
     } */
 
-    let userDataEvent = this.centralUserData.getUserData.subscribe((user)=>{
+    let userDataEvent = this.events.getUserData.subscribe((user)=>{
      // console.log(user)
 
      //if no messages

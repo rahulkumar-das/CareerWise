@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from '../auth.service';
-import { UserDataService } from '../user-data.service';
+//import { UserDataService } from '../user-data.service';
+import { EventEmitterService } from '../event-emitter.service';
 import { Subscription } from 'rxjs';
 
 
@@ -12,10 +13,10 @@ import { Subscription } from 'rxjs';
 })
 export class SidebarComponent implements OnInit {
 
-  constructor(public auth: AuthService, private centralUserData: UserDataService) { }
+  constructor(public auth: AuthService, private events: EventEmitterService) { }
 
   ngOnInit(): void {
-   let userDataEvent= this.centralUserData.getUserData.subscribe((user)=>{
+   let userDataEvent= this.events.getUserData.subscribe((user)=>{
       this.userData=user;
       //console.log(this.userData)
     })

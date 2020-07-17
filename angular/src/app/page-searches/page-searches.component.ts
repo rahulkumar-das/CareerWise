@@ -3,7 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 import { ApiService } from '../api.service';
 import { Title } from '@angular/platform-browser';
 import { DOCUMENT } from '@angular/common';
-import { UserDataService } from '../user-data.service';
+//import { UserDataService } from '../user-data.service';
+import { EventEmitterService } from '../event-emitter.service';
 import { Subscription } from 'rxjs';
 
 
@@ -15,7 +16,7 @@ import { Subscription } from 'rxjs';
 export class PageSearchesComponent implements OnInit {
 
   constructor(private api: ApiService, private route: ActivatedRoute, private title: Title,
-     @Inject(DOCUMENT) private document: Document, private centralUserData: UserDataService ) { }
+     @Inject(DOCUMENT) private document: Document, private events: EventEmitterService ) { }
 
   public query= this.route.snapshot.params.query;
   public subscription;
@@ -24,7 +25,7 @@ export class PageSearchesComponent implements OnInit {
     this.title.setTitle("Search Results");
     this.document.getElementById("sidebarToggleTop").classList.add("d-none");
     
-    let userDataEvent=this.centralUserData.getUserData.subscribe((data)=>{
+    let userDataEvent=this.events.getUserData.subscribe((data)=>{
       this.subscription = this.route.params.subscribe(params =>{
      // console.log(this.query+" Inside onInit");
         this.query = params.query;
