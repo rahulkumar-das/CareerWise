@@ -59,6 +59,8 @@ export class TopbarComponent implements OnInit {
      this.notifications.messages = user.new_message_notifications.length;
       this.profilePicture=user.profile_image;
       this.notifications.alerts=user.new_notifications;
+      this.setAlerts(user.notifications)
+      console.log(this.alerts);
 
       this.setMessagePreviews(user.messages, user.new_message_notifications);
      // console.log(this.messagePreviews);
@@ -109,6 +111,7 @@ export class TopbarComponent implements OnInit {
  public usersId:String ="" ;
  public profilePicture: string="default-avatar";
  public messagePreviews = [];
+ public alerts=[];
  public notifications={
    alerts:0,
    friendRequests:0,
@@ -176,5 +179,42 @@ export class TopbarComponent implements OnInit {
 
   public messageLink(messageId){
     this.router.navigate(['/messages'], {state:{data:{ msgId: messageId} } } );
+  }
+
+  private setAlerts(notificationsData){
+   // console.log(notificationsData);
+
+    for(let alert of notificationsData){
+      let alertObj = JSON.parse(alert);
+     // console.log(alertObj)
+
+      let newAlert={
+        text: alertObj.alert_text,
+        icon: "",
+        bgColor: "",
+        href:""
+      }
+
+      switch(alertObj.alert_type){
+        case "new_friend":
+          newAlert.icon = "fa-user-check";
+          newAlert.bgColor = "bg-success";
+          newAlert.href=`/profile/${alertObj.from_id}`;
+          break;
+        
+        case "liked_post":
+          newAlert.icon = "fa-thumbs-up";
+          newAlert.bgColor = "bg-purple";
+          newAlert.href=`/profile/${this.usersId}`;
+          break;
+        
+         case "commented_post":
+          newAlert.icon = "fa-comment";
+          newAlert.bgColor = "bg-purple";
+          newAlert.href=`/profile/${this.usersId}`;
+          break;
+      }
+      this.alerts.push(newAlert);
+    }
   }
 }
