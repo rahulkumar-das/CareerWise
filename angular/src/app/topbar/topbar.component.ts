@@ -51,7 +51,7 @@ export class TopbarComponent implements OnInit {
     });
 
     let userDataEvent=this.centralUserData.getUserData.subscribe((user)=>{
-      //console.log(data);
+     // console.log(user);
      // this.userData = data;
      // this.numOfFriendRequests= data.friend_requests.length;
      //console.log(user.messages);

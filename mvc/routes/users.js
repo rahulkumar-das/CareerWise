@@ -23,6 +23,7 @@ router.post("/like-unlike/:ownerid/:postid", middleware.authorize, userCtrl.like
 router.post("/post-comment/:ownerid/:postid", middleware.authorize, userCtrl.postCommentOnPost)
 router.post("/send-message/:to", middleware.authorize, userCtrl.sendMessage)
 router.post("/reset-message-notifications", middleware.authorize, userCtrl.resetMessageNotifications)
+router.post("/delete-message/:messageid", middleware.authorize, userCtrl.deleteMessage)
 
 
 
