@@ -17,6 +17,8 @@
             
             <div class="container-fluid p-0 p-sm-4">
                 <h1 class="h3 mb-4 text-gray-800 text-center text-md-left">Your Messages</h1>
+
+                <h2 *ngIf="!messages.length" class="h4 ml-3 font-weight-300">You currently have no messages</h2>
                 
                 <div class="row mb-5">
                     <div class="col-xl-4 col-lg-5">
@@ -29,7 +31,7 @@
                                             <a ><img  src="/assets/images/{{message.messengerProfileImage}}.jpg" class="rounded-circle profile-img-md"></a>
                                             <span class="ml-3"><a  class="link text-primary">{{message.messengerName}}</a></span>
                                         </div>
-                                        <i class="link mb-2 fas fa-trash-alt"></i>
+                                        <i (click)="deleteMessage(message._id)" class="link mb-2 fas fa-trash-alt"></i>
                                     </div>
                                     
                                     
@@ -42,7 +44,7 @@
                     </div>
                     
                     <div class="col-xl-7 col-lg-7">
-                        <div class="message-window shadow bg-white d-flex flex-column justify-content-between">
+                        <div *ngIf="messages.length" class="message-window shadow bg-white d-flex flex-column justify-content-between">
                             <div #scrollMe [scrollTop]="scrollMe.scrollHeight" class="message-content p-3 grow-1 custom-scroll">
                                
                                
@@ -63,8 +65,8 @@
                                 
                             </div>
                             <div>
-                                <form class="" action="index.html" method="post">
-                                    <textarea class="w-100 border-top p-3 custom-scroll" placeholder="Your message..." name="name" rows="4" required></textarea>
+                                <form (submit)="sendMessage();" action="index.html" method="post">
+                                    <textarea [(ngModel)]="newMessage" class="w-100 border-top p-3 custom-scroll" placeholder="Your message..." name="name" rows="4" required></textarea>
                                     <input type="submit" class="w-100 p-2 border-0 btn-primary" value="Send Message">
                                 </form>
                             </div>

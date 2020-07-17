@@ -651,6 +651,25 @@ const resetMessageNotifications = function({payload}, res){
     });
 }
 
+const deleteMessage = function({payload, params}, res){
+
+    User.findById(payload._id, (err,user)=>{
+        if(err){
+            return res.json({err:err});
+        }
+        const message = user.messages.id(params.messageid).remove();
+
+        user.save((err)=>{
+            if(err){
+                return res.json({err:err});
+            }
+
+            return res.statusJson(201, {message:"Deleted message"});
+        });
+    });
+
+}
+
 module.exports = {
     registerUser,
     loginUser,
@@ -666,5 +685,6 @@ module.exports = {
     likeUnlike,
     postCommentOnPost,
     sendMessage,
-    resetMessageNotifications
+    resetMessageNotifications,
+    deleteMessage
 }

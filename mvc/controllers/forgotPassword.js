@@ -40,16 +40,17 @@ const mg = mailgun({apiKey: api_key, domain: DOMAIN});
         });
       },
       function(token, user, done) {
-         /* var smtpTransport = nodemailer.createTransport({
+         var smtpTransport = nodemailer.createTransport({
           service: 'Gmail', 
           auth: {
             user: process.env.SENDER_EMAIL,
-            pass: process.env.SENDER_PASS
+           pass: process.env.SENDER_PASS
+           
           }
         });
         var mailOptions = {
           to: user.email,
-          from: 'Career Site',
+          from: 'Career Wise Team',
           subject: 'Node.js Password Reset',
           text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
             'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
@@ -60,10 +61,10 @@ const mg = mailgun({apiKey: api_key, domain: DOMAIN});
           console.log('mail sent');
        //  req.flash('success', 'An e-mail has been sent to ' + user.email + ' with further instructions.');
           done(err, 'done');
-        }); */ 
+        }); 
 
         //for Demo Purpose
-
+/* 
         const data = {
           from: 'Career Site <me@samples.mailgun.org>',
           to: user.email,
@@ -77,7 +78,7 @@ const mg = mailgun({apiKey: api_key, domain: DOMAIN});
           console.log(body);
           //req.flash('success', 'An e-mail has been sent to ' + user.email + ' with further instructions.');
           done(err, 'done')
-        });
+        }); */
       }
     ], function(err) {
       if (err) return next(err);
@@ -135,16 +136,17 @@ const mg = mailgun({apiKey: api_key, domain: DOMAIN});
             });
         },
         function(user, done) {
-            /* var smtpTransport = nodemailer.createTransport({
+            var smtpTransport = nodemailer.createTransport({
                 service: 'Gmail',
                 auth: {
-                      user: process.env.SENDER_EMAIL,
-                      pass: process.env.SENDER_PASS
+                     user: process.env.SENDER_EMAIL,
+                    pass: process.env.SENDER_PASS
+                    
                 }
             });
             var mailOptions = {
                 to: user.email,
-                from: 'dasrahulkumar89@gmail.com',
+                from: 'Career Wise Team',
                 subject: 'Your password has been changed',
                 text: 'Hello,\n\n' +
                     'This is a confirmation that the password for your account ' + user.email + ' has just been changed.\n'
@@ -152,10 +154,10 @@ const mg = mailgun({apiKey: api_key, domain: DOMAIN});
             smtpTransport.sendMail(mailOptions, function(err) {
                 //req.flash('success', 'Success! Your password has been changed.');
                 done(err);
-            }); */
+            }); 
 
             //// For demo purpose
-            const data = {
+          /*   const data = {
               from: 'Career Site <me@samples.mailgun.org>',
               to: user.email,
               subject: 'Career Site Password Reset Successful',
@@ -165,7 +167,7 @@ const mg = mailgun({apiKey: api_key, domain: DOMAIN});
             mg.messages().send(data, function (err, body) {
               console.log(body);
               done(err, 'done')
-            });
+            }); */
         }
     ], function(err) {
         //if (err) return next(err);
