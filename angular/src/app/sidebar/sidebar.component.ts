@@ -17,7 +17,7 @@ export class SidebarComponent implements OnInit {
 
   ngOnInit(): void {
    let userDataEvent= this.events.getUserData.subscribe((user)=>{
-      this.userData=user;
+      this.userId=user._id;
       //console.log(this.userData)
     })
     this.subscriptions.add(userDataEvent)
@@ -27,7 +27,8 @@ export class SidebarComponent implements OnInit {
     this.subscriptions.unsubscribe();
   } 
 
-  public userData:any={};
+  //public userData:any={};
+  public userId=""
   public subscriptions= new Subscription();
 
 }

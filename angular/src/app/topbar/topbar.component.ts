@@ -55,6 +55,7 @@ export class TopbarComponent implements OnInit {
      // this.userData = data;
      // this.numOfFriendRequests= data.friend_requests.length;
      //console.log(user.messages);
+    
      this.notifications.friendRequests = user.friend_requests.length;
      this.notifications.messages = user.new_message_notifications.length;
       this.profilePicture=user.profile_image;
@@ -80,7 +81,13 @@ export class TopbarComponent implements OnInit {
     //console.log(requestObject)
     this.api.makeRequest(requestObject).then((val)=>{
       //console.log(val)
-      this.events.getUserData.emit(val.user);
+      if(val.status == 404){
+        return this.auth.logout();
+      }
+      if(val.statusCode == 200){
+
+        this.events.getUserData.emit(val.user);
+      }
     });
     this.subscriptions.add(alertEvent);
     this.subscriptions.add(friendRequestEvent);
