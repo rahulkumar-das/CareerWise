@@ -116,7 +116,7 @@ const mg = mailgun({apiKey: api_key, domain: DOMAIN});
                     user.setPassword(req.body.password);
                     user.resetPasswordToken = undefined;
                     user.resetPasswordExpires = undefined;
-                    console.log('password' + user.password + 'and the user is' + user)
+                   // console.log('password' + user.password + 'and the user is' + user)
 
                     user.save((err, newUser) => {
                         if (err) {
