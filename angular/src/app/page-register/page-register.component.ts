@@ -42,6 +42,9 @@ export class PageRegisterComponent implements OnInit {
       if(this.credentials.password!= this.credentials.password_confirm){
         return this.formError="Password and Confirm Password must match"
       }
+      if(this.credentials.password.length<7 && this.credentials.password_confirm.length<7){
+        return this.formError="Password must be of alteast 8 characters"
+      }
 
     //console.log("Form submit");
     //console.log(this.credentials);
