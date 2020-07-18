@@ -60,7 +60,7 @@ export class TopbarComponent implements OnInit {
       this.profilePicture=user.profile_image;
       this.notifications.alerts=user.new_notifications;
       this.setAlerts(user.notifications)
-      console.log(this.alerts);
+     // console.log(this.alerts);
 
       this.setMessagePreviews(user.messages, user.new_message_notifications);
      // console.log(this.messagePreviews);
@@ -135,11 +135,30 @@ export class TopbarComponent implements OnInit {
 
   public searchForFriends(){
     //console.log(this.query+"this is search for ");
-    this.router.navigate(['/search-results',  { query: this.query }])
+    this.router.navigate(['/search-results',  { query: this.query }]);
   }
 
   public resetMessageNotifications(){
+    if(this.notifications.messages == 0){
+      return;
+    }
     this.api.resetMessageNotifications();
+  }
+
+  public resetAlertNotifications(){
+    if(this.notifications.alerts == 0){
+      return;
+    }
+    let requestObject={
+      location:"users/reset-alert-notifications",
+      method:"POST"
+    }
+    this.api.makeRequest(requestObject).then((val)=>{
+     // console.log(val);
+     if(val.statusCode == 201){
+       this.notifications.alerts=0;
+     }
+    })
   }
 
   private setMessagePreviews(messages,messageNotifications){
@@ -217,4 +236,6 @@ export class TopbarComponent implements OnInit {
       this.alerts.push(newAlert);
     }
   }
+
+
 }
