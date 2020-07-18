@@ -33,6 +33,9 @@ router.post("/send-message/:to", middleware.authorize, userCtrl.sendMessage)
 router.post("/delete-message/:messageid", middleware.authorize, userCtrl.deleteMessage)
 router.post("/reset-message-notifications", middleware.authorize, userCtrl.resetMessageNotifications)
 
+//Misc route
+router.post("/reset-alert-notifications", middleware.authorize, userCtrl.resetAlertNotifications)
+
 
 //=============================================
 //Only for development and testing purpose only

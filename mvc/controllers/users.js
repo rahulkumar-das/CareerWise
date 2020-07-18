@@ -92,6 +92,8 @@ const alertUser = function(fromUser, toId, type, postContent){
             }
 
             user.new_notifications++;
+            //store only latest 18 alerts in database
+            user.notifications.splice(18);
             user.notifications.push(JSON.stringify(alert));
             user.save((err,user)=>{
                 if(err){
@@ -775,6 +777,24 @@ const deleteMessage = function({payload, params}, res){
 
 }
 
+const resetAlertNotifications = function({payload}, res){
+
+    User.findById(payload._id, (err, user)=>{
+        if(err){
+            return res.json({err:err});
+        }
+        user.new_notifications=0;
+        user.save((err)=>{
+            if(err){
+                return res.json({err:err});
+            }
+
+            return res.statusJson(201, {message:"Reset Alert Notifications"});
+        });
+    })
+
+}
+
 module.exports = {
     registerUser,
     loginUser,
@@ -791,5 +811,6 @@ module.exports = {
     postCommentOnPost,
     sendMessage,
     resetMessageNotifications,
-    deleteMessage
+    deleteMessage,
+    resetAlertNotifications
 }
