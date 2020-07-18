@@ -34,10 +34,10 @@ export class PageRegisterComponent implements OnInit {
         return this.formError="All fields are required"
 
     }
-     /*  var re = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+      var re = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
       if(!re.test(this.credentials.email)){
         return this.formError="Please enter a valid email address"
-      } */
+      } 
 
       if(this.credentials.password!= this.credentials.password_confirm){
         return this.formError="Password and Confirm Password must match"

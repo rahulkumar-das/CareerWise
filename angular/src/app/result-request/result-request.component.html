@@ -2,20 +2,9 @@
     <a routerLink="/profile/{{resultRequest._id}}" class="p-4 w-max"><img routerLink="/profile/{{resultRequest._id}}"  src="/assets/images/{{resultRequest.profile_image}}.jpg" class="profile-img-md rounded "></a>
     <div>
         <h5><a routerLink="/profile/{{resultRequest._id}}" class="link">{{resultRequest.name}}</a></h5>
-        <!-- <h6>Montreal, Canada</h6>
-        <div class="small">7 Mutual Friends</div> -->
+       
     </div>
     
-    <!-- <div *ngIf="use == 'result'" class="ml-auto mr-3 mt-3 align-self-start">
-        <button (click)="this.api.makeFriendRequest(resultRequest._id)" class="btn btn-sm btn-primary rounded-pill">Add Friend</button>
-        <button class="btn btn-sm btn-success rounded-pill ml-1" data-toggle="modal" data-target="#staticBackdrop">Send Message</button>
-    </div>
-
-    <div *ngIf="use == 'request'" class="ml-auto mr-3 mt-3 align-self-start">
-        <button (click)="accept()" class="btn btn-sm btn-primary rounded-pill">Accept</button>
-        <button class="btn btn-sm btn-success rounded-pill ml-1" data-toggle="modal" data-target="#staticBackdrop">Send Message</button>
-        <button (click)="decline()" class="btn btn-sm btn-danger rounded-pill ml-1">Decline</button>
-    </div> -->
 
     <div class="ml-auto mr-3 mt-3 align-self-start">
         <button *ngIf="use == 'result' && !haveSentFriendRequest && !haveReceivedFriendRequest && !isFriend" (click)="this.api.makeFriendRequest(resultRequest._id); haveSentFriendRequest=true" class="btn btn-sm btn-primary rounded-pill">Add Friend</button>
