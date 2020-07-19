@@ -28,7 +28,7 @@ $cd angular
 $npm install
 
 ```
-* Before running the server and frontend,
+2) Before running the server and frontend,
 create a .env file outside mvc folder to assign the process.env variables:
 
 ```
@@ -39,12 +39,12 @@ RESET_ADDRESS= http://localhost:4200
 
 ```
 
-* To run the server
+3) To run the server
 The node server runs at http://localhost:3000/
 ```
 $nodemon
 ```
-* To run the angular server
+4) To run the angular server
 The angular server runs at http://localhost:4200/
 ```
 $cd angular
