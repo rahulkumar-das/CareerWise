@@ -1,7 +1,7 @@
 # CareerWise
 This project is a website that allows different users to connect with each other. Users can post text contents, adds comment on the post, like the post, add other users as connection by sending them a connection request. The users have a option to accept or decline the connection request. To maintain the privacy a user can view the post content of other user if and only if they both are connected. This means any random user cannot view the post content of other user unless they are connected. One user can send a text message to other user and hence chatting can be performed. The password stored in the database is in hashed format so inorder to reset the password a user has to request for a unique URL that will be sent to the registered email id and will be valid only for 60 minutes.
 
-# Tech Framework used
+# Tech Frameworks used
 * [Node](https://nodejs.org/en/docs/)
 * [Express](https://expressjs.com/en/guide/routing.html)
 * [MongoDB](https://docs.mongodb.com/)
