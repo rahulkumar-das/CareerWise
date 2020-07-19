@@ -13,10 +13,10 @@ A website that allows different users to connect with each other other users by 
 - [x] Can view other user's post only if added as a connection
 
 # Tech Frameworks used
-* [Node](https://nodejs.org/en/docs/)
-* [Express](https://expressjs.com/en/guide/routing.html)
-* [MongoDB](https://docs.mongodb.com/)
-* [Angular](https://angular.io/docs)
+* Back end: [Node](https://nodejs.org/en/docs/), [Express](https://expressjs.com/en/guide/routing.html) 
+* Database: [MongoDB](https://docs.mongodb.com/)
+* Front end: [Angular](https://angular.io/docs)
+* Authentication: [JsonWebtokens](https://jwt.io/introduction/)
 
 # For developers
 * Clone the source locally:
