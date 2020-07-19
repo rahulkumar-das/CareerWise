@@ -1,6 +1,46 @@
 # CareerWise
 This project is a website that allows different users to connect with each other. Users can post text contents, adds comment on the post, like the post, add other users as connection by sending them a connection request. The users have a option to accept or decline the connection request. To maintain the privacy a user can view the post content of other user if and only if they both are connected. This means any random user cannot view the post content of other user unless they are connected. One user can send a text message to other user and hence chatting can be performed. The password stored in the database is in hashed format so inorder to reset the password a user has to request for a unique URL that will be sent to the registered email id and will be valid only for 60 minutes.
 
+# Tech Framework used
+* [Node](https://nodejs.org/en/docs/)
+* [Express](https://expressjs.com/en/guide/routing.html)
+* [MongoDB](https://docs.mongodb.com/)
+* [Angular](https://angular.io/docs)
+
+# For developers
+* Clone the source locally:
+1) To install the dependencies
+```
+$git clone https://github.com/rahulkumar-das/CareerWise.git
+$npm install
+$cd angular
+$npm install
+
+```
+* Before running the server and frontend,
+create a .env file outside mvc folder to assign the process.env variables:
+
+```
+JWT_SECRET=<Any 32 bit random alphanumeric characters>
+SENDER_EMAIL=<your email address>
+SENDER_PASS=<your email account password>
+RESET_ADDRESS= http://localhost:4200
+
+```
+
+* To run the server
+The node server runs at http://localhost:3000/
+```
+$nodemon
+```
+* To run the angular server
+The angular server runs at http://localhost:4200/
+```
+$cd angular
+$ng serve
+```
+
+
 # Screenshots
 ### Registration Page
 ![reg](https://user-images.githubusercontent.com/48314756/87870032-fbe23b00-c9c1-11ea-862c-30f2a6feba31.JPG)
@@ -33,42 +73,5 @@ This project is a website that allows different users to connect with each other
 
 
 
-# Tech Framework used
-* [Node](https://nodejs.org/en/docs/)
-* [Express](https://expressjs.com/en/guide/routing.html)
-* [MongoDB](https://docs.mongodb.com/)
-* [Angular](https://angular.io/docs)
 
-# For developers
-* Clone the source locally:
-1) To install the dependencies
-```
-$git clone https://github.com/rahulkumar-das/CareerWise.git
-$npm install
-$cd angular
-$npm install
 
-```
-* Before running the server and front end do the following:
-create a .env file outside mvc folder to assign the process.env variables:
-
-```
-JWT_SECRET=<Any 32 bit random alphanumeric characters>
-SENDER_EMAIL=<your email address>
-SENDER_PASS=<your email account password>
-RESET_ADDRESS= http://localhost:4200
-
-```
-
-* To run the server
-
-The node server runs at http://localhost:3000/
-```
-$nodemon
-```
-* To run the frontend
-The angular server runs at http://localhost:4200/
-```
-$cd angular
-$ng serve
-```
