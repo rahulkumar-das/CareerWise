@@ -1,5 +1,5 @@
 # CareerWise
-A website that allows different users to connect with each other other users by registering on the website. It has various features that are described below.
+A website that allows different users to connect with each other other users by registering on the website. It has various features that are described below. [See live demo](https://careerwise.herokuapp.com/register)
 
 # Features
 - [x] Login and SignUp using Jwt Authentication
