@@ -9,9 +9,9 @@ var crypto = require("crypto");
 const mailgun = require("mailgun-js");
 
 //Demo purpose
-const DOMAIN = process.env.DOMAIN_KEY;
-const api_key = process.env.API_KEY;
-const mg = mailgun({apiKey: api_key, domain: DOMAIN});
+//const DOMAIN = process.env.DOMAIN_KEY;
+//const api_key = process.env.API_KEY;
+//const mg = mailgun({apiKey: api_key, domain: DOMAIN});
 
 
  const updatePassword= function(req, res, next) {
