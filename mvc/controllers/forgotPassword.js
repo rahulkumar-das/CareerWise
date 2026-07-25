@@ -40,6 +40,7 @@ const mailgun = require("mailgun-js");
         });
       },
       function(token, user, done) {
+         const resetBaseUrl = (process.env.RESET_ADDRESS || process.env.FRONTEND_URL || 'http://localhost:4200').replace(/\/$/, '');
          var smtpTransport = nodemailer.createTransport({
           service: 'Gmail', 
           auth: {
@@ -51,16 +52,19 @@ const mailgun = require("mailgun-js");
         var mailOptions = {
           to: user.email,
           from: 'Career Wise Team',
-          subject: 'Node.js Password Reset',
+          subject: 'Careerwise Password Reset',
           text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
             'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
-            process.env.RESET_ADDRESS+'/reset/' + token + '\n\n' +
-            'If you did not request this, please ignore this email and your password will remain unchanged.\n'
+            `${resetBaseUrl}/reset/${token}` + '\n\n' +
+            'If you did not request this, please ignore your password will remain unchanged.\n'
         };
         smtpTransport.sendMail(mailOptions, function(err) {
+          if (err) {
+            console.error('Mail send error:', err);
+            return done(err);
+          }
           console.log('mail sent');
-       //  req.flash('success', 'An e-mail has been sent to ' + user.email + ' with further instructions.');
-          done(err, 'done');
+          done(null, 'done');
         }); 
 
         //for Demo Purpose
@@ -81,8 +85,10 @@ const mailgun = require("mailgun-js");
         }); */
       }
     ], function(err) {
-      if (err) return next(err);
-      //res.render('forgot', {error: false, success:req.flash('success')});
+      if (err) {
+        console.error('Forgot password flow error:', err);
+        return res.status(500).json({ message: 'Unable to send reset email. Please check the mail configuration.' });
+      }
       res.status(200).json({ message: 'Email is sent. Please Check' });
     });
   };

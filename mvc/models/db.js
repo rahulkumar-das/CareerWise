@@ -1,10 +1,7 @@
 const mongoose = require('mongoose');
-let dbURI = 'mongodb://localhost/A_Social_Media';
+let dbURI = process.env.MONGODB_URI;
 
-if(process.env.NODE_ENV === 'production'){
-    dbURI=process.env.MONGODB_URI;
-}
-mongoose.connect(dbURI, { useNewUrlParser: true , useUnifiedTopology: true}); //very important
+mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 mongoose.connection.on('connected', () => {
     console.log(`Mongoose connected to ${dbURI}`);
