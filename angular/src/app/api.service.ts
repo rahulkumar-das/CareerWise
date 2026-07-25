@@ -13,7 +13,7 @@ export class ApiService {
 
   constructor(private http: HttpClient, private storage : LocalStorageService, private events: EventEmitterService) { }
 
-  private baseUrl="http://localhost:3000";
+  private baseUrl = (window as any).__API_BASE_URL__ || 'http://localhost:3000';
 
   private successHandler(value){
     return value;
