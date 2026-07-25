@@ -40,6 +40,7 @@ const mailgun = require("mailgun-js");
         });
       },
       function(token, user, done) {
+         const resetBaseUrl = (process.env.RESET_ADDRESS || process.env.FRONTEND_URL || 'http://localhost:4200').replace(/\/$/, '');
          var smtpTransport = nodemailer.createTransport({
           service: 'Gmail', 
           auth: {
@@ -54,7 +55,7 @@ const mailgun = require("mailgun-js");
           subject: 'Careerwise Password Reset',
           text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
             'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
-            `${(process.env.RESET_ADDRESS || 'http://localhost:4200').replace(/\/$/, '')}/reset/${token}` + '\n\n' +
+            `${resetBaseUrl}/reset/${token}` + '\n\n' +
             'If you did not request this, please ignore your password will remain unchanged.\n'
         };
         smtpTransport.sendMail(mailOptions, function(err) {
