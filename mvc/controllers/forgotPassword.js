@@ -4,7 +4,6 @@ const mongoose= require('mongoose');
 const passport = require('passport');
 const User = mongoose.model("User");
 var async = require("async");
-var nodemailer = require("nodemailer");
 var crypto = require("crypto");
 const mailgun = require("mailgun-js");
 
@@ -13,6 +12,16 @@ const mailgun = require("mailgun-js");
 //const api_key = process.env.API_KEY;
 //const mg = mailgun({apiKey: api_key, domain: DOMAIN});
 
+const createMailgunClient = function() {
+  const apiKey = process.env.MAILGUN_API_KEY;
+  const domain = process.env.MAILGUN_DOMAIN;
+
+  if (!apiKey || !domain) {
+    return null;
+  }
+
+  return mailgun({ apiKey, domain });
+};
 
  const updatePassword= function(req, res, next) {
     async.waterfall([
@@ -23,11 +32,17 @@ const mailgun = require("mailgun-js");
         });
       },
       function(token, done) {
-        User.findOne({ email: req.body.email }, function(err, user) {
+        const email = String(req.body.email || '').trim().toLowerCase();
+
+        if (!email) {
+          return res.status(400).json({ message: 'Please provide an email address' });
+        }
+
+        User.findOne({ email: email }, function(err, user) {
           if (!user) {
           //req.flash('error', 'No account with that email address exists.');
           console.log('No account with that email address exists.');
-          return res.json({ message: "Email id doesn't exist" });
+          return res.status(404).json({ message: "Email id doesn't exist" });
           }
   
           user.resetPasswordToken = token;
@@ -41,31 +56,29 @@ const mailgun = require("mailgun-js");
       },
       function(token, user, done) {
          const resetBaseUrl = (process.env.RESET_ADDRESS || process.env.FRONTEND_URL || 'http://localhost:4200').replace(/\/$/, '');
-         var smtpTransport = nodemailer.createTransport({
-          service: 'Gmail', 
-          auth: {
-            user: process.env.SENDER_EMAIL,
-           pass: process.env.SENDER_PASS
-           
-          }
-        });
-        var mailOptions = {
+         const mg = createMailgunClient();
+
+         if (!mg) {
+           return done(new Error('Mailgun is not configured. Set MAILGUN_API_KEY and MAILGUN_DOMAIN.'));
+         }
+
+         const mailData = {
+          from: process.env.MAILGUN_FROM || 'Career Wise Team <mailgun@mg.yourdomain.com>',
           to: user.email,
-          from: 'Career Wise Team',
           subject: 'Careerwise Password Reset',
           text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
             'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
             `${resetBaseUrl}/reset/${token}` + '\n\n' +
             'If you did not request this, please ignore your password will remain unchanged.\n'
         };
-        smtpTransport.sendMail(mailOptions, function(err) {
+        mg.messages().send(mailData, function(err, body) {
           if (err) {
             console.error('Mail send error:', err);
             return done(err);
           }
-          console.log('mail sent');
+          console.log('mail sent', body && body.id ? body.id : '');
           done(null, 'done');
-        }); 
+        });
 
         //for Demo Purpose
 /* 
@@ -87,7 +100,8 @@ const mailgun = require("mailgun-js");
     ], function(err) {
       if (err) {
         console.error('Forgot password flow error:', err);
-        return res.status(500).json({ message: 'Unable to send reset email. Please check the mail configuration.' });
+        const details = err && err.response && err.response.body ? err.response.body : err && err.message ? err.message : 'Unknown mail error';
+        return res.status(500).json({ message: 'Unable to send reset email. Please check the mail configuration.', error: details });
       }
       res.status(200).json({ message: 'Email is sent. Please Check' });
     });
@@ -142,24 +156,24 @@ const mailgun = require("mailgun-js");
             });
         },
         function(user, done) {
-            var smtpTransport = nodemailer.createTransport({
-                service: 'Gmail',
-                auth: {
-                     user: process.env.SENDER_EMAIL,
-                    pass: process.env.SENDER_PASS
-                    
-                }
-            });
-            var mailOptions = {
+            const mg = createMailgunClient();
+            if (!mg) {
+              return done(new Error('Mailgun is not configured. Set MAILGUN_API_KEY and MAILGUN_DOMAIN.'));
+            }
+
+            const mailData = {
+                from: process.env.MAILGUN_FROM || 'Career Wise Team <mailgun@mg.yourdomain.com>',
                 to: user.email,
-                from: 'Career Wise Team',
                 subject: 'Your password has been changed',
                 text: 'Hello,\n\n' +
                     'This is a confirmation that the password for your account ' + user.email + ' has just been changed.\n'
             };
-            smtpTransport.sendMail(mailOptions, function(err) {
-                //req.flash('success', 'Success! Your password has been changed.');
-                done(err);
+            mg.messages().send(mailData, function(err, body) {
+                if (err) {
+                    console.error('Password changed mail error:', err);
+                    return done(err);
+                }
+                done(null, body);
             }); 
 
             //// For demo purpose

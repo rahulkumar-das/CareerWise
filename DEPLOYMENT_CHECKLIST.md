@@ -7,6 +7,9 @@ Set these in your hosting platform:
 - JWT_SECRET=your-long-random-secret
 - SENDER_EMAIL=your-gmail-address@gmail.com
 - SENDER_PASS=your-gmail-app-password
+- MAILGUN_API_KEY=your-mailgun-api-key
+- MAILGUN_DOMAIN=your-mailgun-domain
+- MAILGUN_FROM='Career Wise Team <mailgun@your-domain>'
 - RESET_ADDRESS=https://your-frontend-url
 - MONGODB_URI=mongodb+srv://.../Careerwise?appName=Cluster0
 - FRONTEND_URL=https://your-frontend-url
