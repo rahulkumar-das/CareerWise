@@ -20,7 +20,20 @@ export class ApiService {
     return value;
   }
   private errorHandler(error){
-    return error;
+    if (error && error.error) {
+      if (typeof error.error === 'string') {
+        return { message: error.error };
+      }
+      if (error.error.message) {
+        return error.error;
+      }
+    }
+
+    if (error && error.message) {
+      return { message: error.message };
+    }
+
+    return { message: 'Request failed' };
   }
 
   public makeRequest(requestObject):any{
@@ -36,15 +49,19 @@ export class ApiService {
       return console.log("No location is specified in the request object");
     }
     let url = `${this.baseUrl}/${location}`;
-    let httpOptions ={};
+    let headers = new HttpHeaders({
+      'Accept': 'application/json'
+    });
 
-     if(this.storage.getToken()){
-      httpOptions={
-        headers: new HttpHeaders({
-          'Authorization': `Bearer ${this.storage.getToken()}`
-        }),
-      }
-    } 
+    if (this.storage.getToken()) {
+      headers = headers.set('Authorization', `Bearer ${this.storage.getToken()}`);
+    }
+
+    if (method === 'post') {
+      headers = headers.set('Content-Type', 'application/json');
+    }
+
+    const httpOptions = { headers };
 
     if(method == "get"){
       return this.http.get(url, httpOptions).toPromise()
