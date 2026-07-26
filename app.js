@@ -41,12 +41,14 @@ app.use('/',(req,res,next)=>{
   const allowedOrigins = [
     'http://localhost:4200',
     'http://localhost:3000',
+    'https://career-wise-o2ssmrj5q-careerwise-2026.vercel.app',
     process.env.FRONTEND_URL
   ].filter(Boolean);
 
   const origin = req.headers.origin;
-  if (origin && allowedOrigins.includes(origin)) {
+  if (origin && (allowedOrigins.includes(origin) || process.env.NODE_ENV === 'production')) {
     res.header('Access-Control-Allow-Origin', origin);
+    res.header('Vary', 'Origin');
   } else if (!origin) {
     res.header('Access-Control-Allow-Origin', process.env.FRONTEND_URL || 'http://localhost:4200');
   }
